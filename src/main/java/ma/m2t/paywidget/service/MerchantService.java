@@ -11,8 +11,10 @@ public interface MerchantService {
 
     //Post
     MerchantDTO saveNewMerchant(MerchantDTO merchantDTO);
+    void associatePaymentMethodsToMerchant(Long merchantId, List<Long> paymentMethodIds) throws MerchantNotFoundException;
 
     //Get
+    List<MerchantDTO> getAllMerchants();
     List<MerchantDTO> getAllMerchantsByMethod(Long methodId);
     MerchantDTO getMerchantById(Long merchantId) throws MerchantNotFoundException;
     List<PaymentMethodDTO> getAllMerchantMethods(Long merchantId);

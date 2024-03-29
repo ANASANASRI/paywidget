@@ -6,7 +6,11 @@ import ma.m2t.paywidget.dto.PaymentMethodDTO;
 import ma.m2t.paywidget.exceptions.MerchantNotFoundException;
 import ma.m2t.paywidget.mappers.PayMapperImpl;
 import ma.m2t.paywidget.model.Merchant;
+import ma.m2t.paywidget.model.MerchantMethods;
+import ma.m2t.paywidget.model.PaymentMethod;
+import ma.m2t.paywidget.repository.MerchantMethodsRepository;
 import ma.m2t.paywidget.repository.MerchantRepository;
+import ma.m2t.paywidget.repository.PaymentMethodRepository;
 import ma.m2t.paywidget.service.MerchantService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +29,12 @@ import java.util.Optional;
 public class MerchantServiceImpl implements MerchantService {
 
     private MerchantRepository merchantRepository;
+    private MerchantMethodsRepository merchantMethodsRepository;
+    private PaymentMethodRepository paymentMethodRepository;
     private PayMapperImpl dtoMapper;
 
+
+///POST//////////////////////////////////////////
 // Save a new merchant and generate secret key
     public MerchantDTO saveNewMerchant(MerchantDTO merchantDTO) {
 
@@ -38,6 +47,7 @@ public class MerchantServiceImpl implements MerchantService {
 
         return dtoMapper.fromMerchant(savedMerchant);
     }
+
     // Generate a secret key
     public String generateSecretKey() {
         SecureRandom secureRandom = new SecureRandom();
@@ -46,10 +56,43 @@ public class MerchantServiceImpl implements MerchantService {
         return new BigInteger(1, randomBytes).toString(16);
     }
     // Send secret key SM
+//**END**//
 
+//
+    public void associatePaymentMethodsToMerchant(Long merchantId, List<Long> paymentMethodIds) throws MerchantNotFoundException {
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() -> new MerchantNotFoundException("Merchant Not found"));
+
+        // Retrieve the payment method entities
+        List<PaymentMethod> paymentMethods = paymentMethodRepository.findAllById(paymentMethodIds);
+        // Iterate over the chosen payment method IDs
+        for (Long paymentMethodId : paymentMethodIds) {
+            // Retrieve the payment method from the database
+            PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId)
+                    .orElseThrow(() -> new IllegalArgumentException("Payment Method not found"));
+
+            // Create a new MerchantMethods entity
+            MerchantMethods merchantMethods = new MerchantMethods();
+            merchantMethods.setMerchant(merchant);
+            merchantMethods.setPaymentMethod(paymentMethod);
+            merchantMethods.setSelected(true);
+
+            // Save the MerchantMethods entity
+            merchantMethodsRepository.save(merchantMethods);
+
+        // Print out the names of associated payment methods
+        System.out.print("Merchant " + merchant.getMerchantName() + " has the following payment methods: ");
+        for (PaymentMethod p : paymentMethods) {
+            System.out.print(p.getMethodName() + ", ");
+        }
+        System.out.println();
+        //
+    }
+    }
 //**END**//
 
 
+///GET/////////////////////
 //
     @Override
     public List<MerchantDTO> getAllMerchantsByMethod(Long methodId) {
@@ -57,16 +100,26 @@ public class MerchantServiceImpl implements MerchantService {
     }
 //**END**//
 
+//
+    @Override
+    public List<MerchantDTO> getAllMerchants() {
+        List<Merchant> merchants = merchantRepository.findAll();
+        List<MerchantDTO> merchantsDTO=new ArrayList<>();
+        for (Merchant m:merchants){
+            merchantsDTO.add(dtoMapper.fromMerchant(m));
+        }
+        return merchantsDTO;
+    }
+//**END**//
 
 //
     @Override
     public MerchantDTO getMerchantById(Long merchantId) throws MerchantNotFoundException{
         Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new MerchantNotFoundException("Customer Not found"));
+                .orElseThrow(() -> new MerchantNotFoundException("Merchant Not found"));
         return dtoMapper.fromMerchant(merchant);
     }
 //**END**//
-
 
 //
     @Override
@@ -76,6 +129,8 @@ public class MerchantServiceImpl implements MerchantService {
 //**END**//
 
 
+
+///UPDATE/////////////////////
 //
     @Override
     public MerchantDTO UpdateMerchant(MerchantDTO merchantDTO) {
@@ -84,10 +139,12 @@ public class MerchantServiceImpl implements MerchantService {
 //**END**//
 
 
+
+///DELETE/////////////////////
 //
     @Override
     public void deleteMerchant(Long merchantId) {
-
+        merchantRepository.deleteById(merchantId);
     }
 //**END**//
 
@@ -121,31 +178,3 @@ public class MerchantServiceImpl implements MerchantService {
 
 
 }
-
-
-//// Example usage
-//public static void main(String[] args) {
-//    // Create a sample merchant
-//    Merchant merchant = new Merchant();
-//    merchant.setMerchantHost("https://example.com");
-//    merchant.setSecretKey("randomsecretkey");
-//
-//    // Example hostname and secret key for testing
-//    String hostname = "https://example.com";
-//    String secretKey = "randomsecretkey";
-//
-//    // Create an instance of MerchantService
-//    MerchantService merchantService = new MerchantService();
-//
-//    // Test if the merchant has permission
-//    boolean hasPermission = merchantService.hasPermission(merchant, hostname, secretKey);
-//    if (hasPermission) {
-//        System.out.println("Merchant has permission.");
-//    } else {
-//        System.out.println("Merchant does not have permission.");
-//    }
-//
-//    // Generate a new secret key and send it to the merchant via SMS
-//    String newSecretKey = merchantService.generateSecretKey();
-//    merchantService.sendSecretKeyViaSMS(merchant, newSecretKey);
-//}

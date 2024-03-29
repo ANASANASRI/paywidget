@@ -8,6 +8,8 @@ import ma.m2t.paywidget.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin("*")
 @AllArgsConstructor
@@ -17,10 +19,22 @@ public class MerchantRestAPI {
     private MerchantService merchantService;
 //    private MerchantRepository merchantRepository;
 
+//POST
     @PostMapping("/save")
     public MerchantDTO AddMerchant(@RequestBody MerchantDTO merchantDTO){
         this.merchantService.saveNewMerchant(merchantDTO);
         return merchantDTO;
+    }
+
+    @PostMapping("/{merchantId}/associatePaymentMethods")
+    public void associatePaymentMethodsWithMerchant(@PathVariable Long merchantId, @RequestBody List<Long> paymentMethodIds) throws MerchantNotFoundException {
+        this.merchantService.associatePaymentMethodsToMerchant(merchantId, paymentMethodIds);
+    }
+
+//GET
+    @GetMapping("/all")
+    public List<MerchantDTO> GetAll(){
+        return merchantService.getAllMerchants();
     }
 
     @GetMapping("/{id}")
@@ -44,8 +58,10 @@ public class MerchantRestAPI {
         return hasPermission;
     }
 
+//DELETE
+    @DeleteMapping("/delete/{id}")
+    public void DeleteByID(@PathVariable(name = "id") Long id){
+        merchantService.deleteMerchant(id);
+    }
+
 }
-
-// https://moroccomart.ma
-
-// f5423d3682d5c219629d6c7e2be7be0a8496f8b8a4a68566c8d37a8f3c59524d
