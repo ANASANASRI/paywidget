@@ -16,11 +16,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import org.apache.commons.codec.binary.Hex;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -33,8 +39,8 @@ public class MerchantServiceImpl implements MerchantService {
     private PaymentMethodRepository paymentMethodRepository;
     private PayMapperImpl dtoMapper;
 
-
-///POST//////////////////////////////////////////
+///****************************************************************************************************
+///POST/////////////////////
 // Save a new merchant and generate secret key
     public MerchantDTO saveNewMerchant(MerchantDTO merchantDTO) {
 
@@ -55,18 +61,31 @@ public class MerchantServiceImpl implements MerchantService {
         secureRandom.nextBytes(randomBytes);
         return new BigInteger(1, randomBytes).toString(16);
     }
+    //Hash
+    public static String hashSecretKey(String secretKey) {
+        return BCrypt.hashpw(secretKey, BCrypt.gensalt());
+    }
+    public static boolean verifySecretKey(String secretKey, String hashedKey) {
+        return BCrypt.checkpw(secretKey, hashedKey);
+    }
     // Send secret key SM
 //**END**//
 
 //
-    public void associatePaymentMethodsToMerchant(Long merchantId, List<Long> paymentMethodIds) throws MerchantNotFoundException {
-        Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new MerchantNotFoundException("Merchant Not found"));
+public void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> paymentMethodIds) throws MerchantNotFoundException {
+    Merchant merchant = merchantRepository.findById(merchantId)
+            .orElseThrow(() -> new MerchantNotFoundException("Merchant Not found"));
 
-        // Retrieve the payment method entities
-        List<PaymentMethod> paymentMethods = paymentMethodRepository.findAllById(paymentMethodIds);
-        // Iterate over the chosen payment method IDs
-        for (Long paymentMethodId : paymentMethodIds) {
+    // Retrieve the existing associations for this merchant
+    List<MerchantMethods> existingAssociations = merchantMethodsRepository.findByMerchantMerchantId(merchantId);
+    Set<Long> existingPaymentMethodIds = new HashSet<>();
+    for (MerchantMethods association : existingAssociations) {
+        existingPaymentMethodIds.add(association.getPaymentMethod().getPaymentMethodId());
+    }
+
+    // Iterate over the chosen payment method IDs
+    for (Long paymentMethodId : paymentMethodIds) {
+        if (!existingPaymentMethodIds.contains(paymentMethodId)) {
             // Retrieve the payment method from the database
             PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId)
                     .orElseThrow(() -> new IllegalArgumentException("Payment Method not found"));
@@ -77,21 +96,31 @@ public class MerchantServiceImpl implements MerchantService {
             merchantMethods.setPaymentMethod(paymentMethod);
             merchantMethods.setSelected(true);
 
-            // Save the MerchantMethods entity
             merchantMethodsRepository.save(merchantMethods);
-
-        // Print out the names of associated payment methods
-        System.out.print("Merchant " + merchant.getMerchantName() + " has the following payment methods: ");
-        for (PaymentMethod p : paymentMethods) {
-            System.out.print(p.getMethodName() + ", ");
+        } else {
+            // Update existing association if it exists
+            for (MerchantMethods existingAssociation : existingAssociations) {
+                if (existingAssociation.getPaymentMethod().getPaymentMethodId().equals(paymentMethodId)) {
+                    existingAssociation.setSelected(true); // Update isSelected to true
+                    merchantMethodsRepository.save(existingAssociation);
+                    break;
+                }
+            }
         }
-        System.out.println();
-        //
     }
+
+    // Print out the names of associated payment methods
+    System.out.print("Merchant " + merchant.getMerchantName() + " has the following payment methods: ");
+    List<PaymentMethod> paymentMethods = paymentMethodRepository.findAllById(paymentMethodIds);
+    for (PaymentMethod p : paymentMethods) {
+        System.out.print(p.getMethodName() + ", ");
     }
+    System.out.println();
+}
 //**END**//
 
 
+///****************************************************************************************************
 ///GET/////////////////////
 //
     @Override
@@ -129,7 +158,7 @@ public class MerchantServiceImpl implements MerchantService {
 //**END**//
 
 
-
+///****************************************************************************************************
 ///UPDATE/////////////////////
 //
     @Override
@@ -138,8 +167,36 @@ public class MerchantServiceImpl implements MerchantService {
     }
 //**END**//
 
+//
+public void selectPaymentMethodInMerchant(Long merchantId, Long paymentMethodId) throws MerchantNotFoundException {
+    Merchant merchant = merchantRepository.findById(merchantId)
+            .orElseThrow(() -> new MerchantNotFoundException("Merchant Not found"));
+
+    PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId)
+            .orElseThrow(() -> new IllegalArgumentException("Payment Method not found"));
+
+    MerchantMethods existingAssociation = merchantMethodsRepository.findByMerchantMerchantIdAndPaymentMethodPaymentMethodId(merchantId, paymentMethodId);
+
+    if (existingAssociation == null) {
+        // If association doesn't exist, create a new one and set isSelected to true
+        MerchantMethods newAssociation = new MerchantMethods();
+        newAssociation.setMerchant(merchant);
+        newAssociation.setPaymentMethod(paymentMethod);
+        newAssociation.setSelected(true);
+        merchantMethodsRepository.save(newAssociation);
+    } else {
+        // If association exists, toggle isSelected value
+        existingAssociation.setSelected(!existingAssociation.isSelected());
+        merchantMethodsRepository.save(existingAssociation);
+    }
+
+    // Print out the status of the payment method for the merchant
+    System.out.println("Payment method " + paymentMethod.getMethodName() + " for merchant " + merchant.getMerchantName() + " is now " + (existingAssociation != null && existingAssociation.isSelected() ? "selected" : "deselected"));
+}
+//**END**//
 
 
+///****************************************************************************************************
 ///DELETE/////////////////////
 //
     @Override
@@ -149,32 +206,110 @@ public class MerchantServiceImpl implements MerchantService {
 //**END**//
 
 
-//  Test if he has Permission
-    @Override
-    public Boolean hasPermission(Long merchantID, String hostname, String secretKey) {
-        Optional<Merchant> optionalMerchant = merchantRepository.findById(merchantID);
+//  Test if he has Permission   HMAC
+//    public Boolean hasPermission(String hostname, String secretKey) {
+//        List<Merchant> merchants = merchantRepository.findAll();
+//
+//        for (Merchant merchant : merchants) {
+//            if (merchant.getMerchantHost().equals(hostname) && merchant.getSecretKey().equals(secretKey)) {
+//                System.out.println("Permission granted.");
+//                return true;
+//            }
+//        }
+//
+//        System.out.println("Merchant not found with provided hostname and secret key.");
+//        return false;
+//    }
 
-        if (optionalMerchant.isPresent()) {
-            Merchant merchant = optionalMerchant.get();
 
-            if (!merchant.getMerchantHost().equals(hostname)) {
-                System.out.println("Hostname does not match.");
-                return false;
+///****************************************************************************************************
+///CHECK PERMISSION/////////////////////
+//
+    public Boolean hasPermission(String hostname, String secretKey, String merchantId, String orderId,
+                                 double amount, String currency, String hmac) {
+        List<Merchant> merchants = merchantRepository.findAll();
+
+        for (Merchant merchant : merchants) {
+            if (merchant.getMerchantHost().equals(hostname) && merchant.getSecretKey().equals(secretKey)) {
+                String generatedHmac = generateHmac(merchantId, orderId, amount, currency, merchant.getSecretKey());
+                if (hmac.equals(generatedHmac)) {
+                    System.out.println("HMAC Permission granted."+generatedHmac+"......"+merchant.getSecretKey());
+                    return true;
+                } else {
+                    System.out.println("HMAC verification failed."+generatedHmac+"......"+merchant.getSecretKey());
+                    return false;
+                }
             }
-
-            if (!merchant.getSecretKey().equals(secretKey)) {
-                System.out.println("Secret key does not match.");
-                return false;
-            }
-
-            System.out.println("Permission granted.");
-            return true;
         }
 
-        System.out.println("Merchant not found.");
+        System.out.println("Merchant not found with provided hostname and secret key.");
         return false;
     }
+
+    private String generateHmac(String merchantId, String orderId, double amount, String currency, String secretKey) {
+        String data = merchantId + ':' + orderId + ':' + amount + ':' + currency;
+        return hmacDigest(data, secretKey);
+    }
+
+    private String hmacDigest(String data, String secretKey) {
+        try {
+            byte[] keyBytes = secretKey.getBytes();
+            SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA1");
+
+            // Get an hmac_sha1 Mac instance and initialize with the signing key
+            Mac mac = Mac.getInstance("HmacSHA1");
+            mac.init(signingKey);
+
+            // Compute the hmac on input data bytes
+            byte[] rawHmac = mac.doFinal(data.getBytes());
+
+            // Convert raw bytes to Hex
+            byte[] hexBytes = new Hex().encode(rawHmac);
+
+            //  Covert array of Hex bytes to a String
+            return new String(hexBytes, "UTF-8");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+//    private String hmacDigest(String data, String key, String algorithm) {
+//        try {
+//            Mac mac = Mac.getInstance(algorithm);
+//            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), algorithm);
+//            mac.init(secretKey);
+//            byte[] hmacBytes = mac.doFinal(data.getBytes());
+//            return Base64.getEncoder().encodeToString(hmacBytes);
+//        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+//            e.printStackTrace(); // Handle the exception appropriately
+//            return null;
+//        }
+//    }
+
 //**END**//
 
-
 }
+
+
+
+//// Method to generate a secret key
+//public static String generateSecretKey(int length) {
+//    // Generate a random secret key
+//    SecureRandom random = new SecureRandom();
+//    byte[] keyBytes = new byte[length];
+//    random.nextBytes(keyBytes);
+//    String secretKey = bytesToHex(keyBytes);
+//    return secretKey;
+//}
+//
+// Method to hash the secret key using BCrypt
+
+//
+//// Helper method to convert bytes to hexadecimal string
+//private static String bytesToHex(byte[] bytes) {
+//    StringBuilder result = new StringBuilder();
+//    for (byte b : bytes) {
+//        result.append(String.format("%02x", b));
+//    }
+//    return result.toString();
+//}

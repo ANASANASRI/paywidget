@@ -28,7 +28,7 @@ public class MerchantRestAPI {
 
     @PostMapping("/{merchantId}/associatePaymentMethods")
     public void associatePaymentMethodsWithMerchant(@PathVariable Long merchantId, @RequestBody List<Long> paymentMethodIds) throws MerchantNotFoundException {
-        this.merchantService.associatePaymentMethodsToMerchant(merchantId, paymentMethodIds);
+        this.merchantService.FirstAssociatePaymentMethodsToMerchant(merchantId, paymentMethodIds);
     }
 
 //GET
@@ -42,20 +42,47 @@ public class MerchantRestAPI {
         return merchantService.getMerchantById(id);
     }
 
-    @GetMapping("/permission")
-    public Boolean testPermission(
-            @RequestParam Long merchantID,
-            @RequestParam String hostname,
-            @RequestParam String secretKey) {
+//    @GetMapping("/permission")
+//    public Boolean testPermission(
+//            @RequestParam String hostname,
+//            @RequestParam String secretKey) {
+//
+//        Boolean hasPermission = merchantService.hasPermission(hostname, secretKey);
+//
+//        System.out.println("Hostname: " + hostname);
+//        System.out.println("Secret Key: " + secretKey);
+//        System.out.println("Has Permission: " + hasPermission);
+//
+//        return hasPermission;
+//    }
+@GetMapping("/permission")
+public Boolean testPermission(
+        @RequestParam String hostname,
+        @RequestParam String secretKey,
+        @RequestParam String merchantId,
+        @RequestParam String orderId,
+        @RequestParam double amount,
+        @RequestParam String currency,
+        @RequestParam String hmac) {
 
-        Boolean hasPermission = merchantService.hasPermission(merchantID, hostname, secretKey);
+    Boolean hasPermission = merchantService.hasPermission(hostname, secretKey, merchantId, orderId, amount, currency, hmac);
 
-        System.out.println("Merchant ID: " + merchantID);
-        System.out.println("Hostname: " + hostname);
-        System.out.println("Secret Key: " + secretKey);
-        System.out.println("Has Permission: " + hasPermission);
+    System.out.println("Hostname: " + hostname);
+    System.out.println("Secret Key: " + secretKey);
+    System.out.println("Merchant ID: " + merchantId);
+    System.out.println("Order ID: " + orderId);
+    System.out.println("Amount: " + amount);
+    System.out.println("Currency: " + currency);
+    System.out.println("HMAC: " + hmac);
+    System.out.println("Has Permission: " + hasPermission);
 
-        return hasPermission;
+    return hasPermission;
+}
+
+//UPDATE
+    @PutMapping("/{merchantId}/payment-method/{paymentMethodId}")
+    public void selectPaymentMethodInMerchant(@PathVariable Long merchantId, @PathVariable Long paymentMethodId) throws MerchantNotFoundException {
+        merchantService.selectPaymentMethodInMerchant(merchantId, paymentMethodId);
     }
 
 //DELETE

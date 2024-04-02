@@ -34,9 +34,10 @@ public class Merchant {
     // Service ID
     private String serviceId;
 
+    // Access Key
+    private String accessKey;
     // Secret key (Hashed)
     private String secretKey;
-
 
     //
     @OneToMany(mappedBy = "merchant")

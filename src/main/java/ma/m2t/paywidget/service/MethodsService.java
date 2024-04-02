@@ -5,19 +5,19 @@ import ma.m2t.paywidget.dto.PaymentMethodDTO;
 import java.util.List;
 
 public interface MethodsService {
-
-    //Post
+///****************************************************************************************************
+//Post
     PaymentMethodDTO savePaymentMethod(PaymentMethodDTO paymentMethodDTO);
 
-    //Get
+///****************************************************************************************************
+//Get
     List<PaymentMethodDTO> getAllPaymentMethodsByMerchant(Long merchantId);
     List<PaymentMethodDTO> getAllPaymentMethodsByMethod(Long methodId);
     PaymentMethodDTO getPaymentMethodById(Long paymentMethodId);
-
-
-    //Update
+///****************************************************************************************************
+//Update
     PaymentMethodDTO UpdatePaymentMethod(PaymentMethodDTO paymentMethodDTO);
-
-    //Delete
+///****************************************************************************************************
+//Delete
     void deletePaymentMethod(Long paymentMethodId);
 }

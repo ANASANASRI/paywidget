@@ -9,20 +9,30 @@ import java.util.List;
 
 public interface MerchantService {
 
-    //Post
+///****************************************************************************************************
+//Post
     MerchantDTO saveNewMerchant(MerchantDTO merchantDTO);
-    void associatePaymentMethodsToMerchant(Long merchantId, List<Long> paymentMethodIds) throws MerchantNotFoundException;
 
-    //Get
+    //
+    void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> paymentMethodIds) throws MerchantNotFoundException;
+
+///****************************************************************************************************
+//Get
     List<MerchantDTO> getAllMerchants();
     List<MerchantDTO> getAllMerchantsByMethod(Long methodId);
     MerchantDTO getMerchantById(Long merchantId) throws MerchantNotFoundException;
     List<PaymentMethodDTO> getAllMerchantMethods(Long merchantId);
-    Boolean hasPermission(Long merchantId, String hostname, String secretKey);
+//    Boolean hasPermission(String hostname, String secretKey);
+    Boolean hasPermission(String hostname, String secretKey, String merchantId, String orderId,
+                          double amount, String currency, String hmac);
 
-    //Update
+///****************************************************************************************************
+//Update
     MerchantDTO UpdateMerchant(MerchantDTO merchantDTO);
+    void selectPaymentMethodInMerchant(Long merchantId, Long paymentMethodId) throws MerchantNotFoundException ;
 
-    //Delete
+///****************************************************************************************************
+//Delete
     void deleteMerchant(Long merchantId);
+
 }
