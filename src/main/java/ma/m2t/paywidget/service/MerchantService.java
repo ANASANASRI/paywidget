@@ -23,7 +23,7 @@ public interface MerchantService {
     MerchantDTO getMerchantById(Long merchantId) throws MerchantNotFoundException;
     List<PaymentMethodDTO> getAllMerchantMethods(Long merchantId);
 //    Boolean hasPermission(String hostname, String secretKey);
-    Boolean hasPermission(String hostname, String secretKey, String merchantId, String orderId,
+    Boolean hasPermission(String hostname, String accessKey, String merchantId, String orderId,
                           double amount, String currency, String hmac);
 
 ///****************************************************************************************************

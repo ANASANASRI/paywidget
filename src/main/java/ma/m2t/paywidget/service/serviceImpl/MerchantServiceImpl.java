@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
@@ -206,45 +207,32 @@ public void selectPaymentMethodInMerchant(Long merchantId, Long paymentMethodId)
 //**END**//
 
 
-//  Test if he has Permission   HMAC
-//    public Boolean hasPermission(String hostname, String secretKey) {
-//        List<Merchant> merchants = merchantRepository.findAll();
-//
-//        for (Merchant merchant : merchants) {
-//            if (merchant.getMerchantHost().equals(hostname) && merchant.getSecretKey().equals(secretKey)) {
-//                System.out.println("Permission granted.");
-//                return true;
-//            }
-//        }
-//
-//        System.out.println("Merchant not found with provided hostname and secret key.");
-//        return false;
-//    }
 
 
 ///****************************************************************************************************
 ///CHECK PERMISSION/////////////////////
 //
-    public Boolean hasPermission(String hostname, String secretKey, String merchantId, String orderId,
-                                 double amount, String currency, String hmac) {
-        List<Merchant> merchants = merchantRepository.findAll();
+public Boolean hasPermission(String hostname, String accessKey, String merchantId, String orderId,
+                             double amount, String currency, String hmac){
+    List<Merchant> merchants = merchantRepository.findAll();
 
-        for (Merchant merchant : merchants) {
-            if (merchant.getMerchantHost().equals(hostname) && merchant.getSecretKey().equals(secretKey)) {
-                String generatedHmac = generateHmac(merchantId, orderId, amount, currency, merchant.getSecretKey());
-                if (hmac.equals(generatedHmac)) {
-                    System.out.println("HMAC Permission granted."+generatedHmac+"......"+merchant.getSecretKey());
-                    return true;
-                } else {
-                    System.out.println("HMAC verification failed."+generatedHmac+"......"+merchant.getSecretKey());
-                    return false;
-                }
+    for (Merchant merchant : merchants) {
+        //verify the dehash secret key if equals to secretKey provided
+        if (merchant.getMerchantHost().equals(hostname) && merchant.getAccessKey().equals(accessKey)) {
+            String generatedHmac = generateHmac(merchantId, orderId, amount, currency, merchant.getSecretKey());
+            if (hmac.equals(generatedHmac)) {
+                System.out.println("HMAC Permission granted."+generatedHmac+"......"+merchant.getSecretKey());
+                return true;
+            } else {
+                System.out.println("HMAC verification failed."+generatedHmac+"......"+merchant.getSecretKey());
+                return false;
             }
         }
-
-        System.out.println("Merchant not found with provided hostname and secret key.");
-        return false;
     }
+
+    System.out.println("Merchant not found with provided hostname and secret key.");
+    return false;
+}
 
     private String generateHmac(String merchantId, String orderId, double amount, String currency, String secretKey) {
         String data = merchantId + ':' + orderId + ':' + amount + ':' + currency;

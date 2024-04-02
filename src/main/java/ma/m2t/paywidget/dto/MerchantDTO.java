@@ -18,6 +18,8 @@ public class MerchantDTO {
     // Service ID
     private String serviceId;
 
+    // Access Key
+    private String accessKey;
     // Secret key (Hashed)
     private String secretKey;
 }
