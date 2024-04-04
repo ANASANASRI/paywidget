@@ -18,12 +18,12 @@ public abstract class PaymentMethod {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentMethodId;
-
     private String methodName;
     private String methodDescription;
     private String methodIconUrl;
 
     @OneToMany(mappedBy = "paymentMethod")
+
     private List<Transaction> transactions;
 
     @ManyToMany(mappedBy = "paymentMethods")

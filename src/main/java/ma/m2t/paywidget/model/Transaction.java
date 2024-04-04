@@ -21,6 +21,7 @@ public class Transaction {
     private double amount;
     private String currency;
     private String status;
+
     private long timestamp;
 
     // Client * * *
@@ -34,9 +35,16 @@ public class Transaction {
     // Notif
     private String notif;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private PaymentMethod paymentMethod;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Merchant merchant;
+
+
 }
+//    @Column(name = "payment_method_id")
+//    private Long paymentMethodId;
+//
+//    @Column(name = "merchant_id")
+//    private Long merchantId;

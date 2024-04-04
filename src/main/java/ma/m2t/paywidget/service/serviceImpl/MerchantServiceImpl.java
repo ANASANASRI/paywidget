@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
@@ -62,6 +61,7 @@ public class MerchantServiceImpl implements MerchantService {
         secureRandom.nextBytes(randomBytes);
         return new BigInteger(1, randomBytes).toString(16);
     }
+
     //Hash
     public static String hashSecretKey(String secretKey) {
         return BCrypt.hashpw(secretKey, BCrypt.gensalt());
@@ -169,31 +169,7 @@ public void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> p
 //**END**//
 
 //
-public void selectPaymentMethodInMerchant(Long merchantId, Long paymentMethodId) throws MerchantNotFoundException {
-    Merchant merchant = merchantRepository.findById(merchantId)
-            .orElseThrow(() -> new MerchantNotFoundException("Merchant Not found"));
 
-    PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId)
-            .orElseThrow(() -> new IllegalArgumentException("Payment Method not found"));
-
-    MerchantMethods existingAssociation = merchantMethodsRepository.findByMerchantMerchantIdAndPaymentMethodPaymentMethodId(merchantId, paymentMethodId);
-
-    if (existingAssociation == null) {
-        // If association doesn't exist, create a new one and set isSelected to true
-        MerchantMethods newAssociation = new MerchantMethods();
-        newAssociation.setMerchant(merchant);
-        newAssociation.setPaymentMethod(paymentMethod);
-        newAssociation.setSelected(true);
-        merchantMethodsRepository.save(newAssociation);
-    } else {
-        // If association exists, toggle isSelected value
-        existingAssociation.setSelected(!existingAssociation.isSelected());
-        merchantMethodsRepository.save(existingAssociation);
-    }
-
-    // Print out the status of the payment method for the merchant
-    System.out.println("Payment method " + paymentMethod.getMethodName() + " for merchant " + merchant.getMerchantName() + " is now " + (existingAssociation != null && existingAssociation.isSelected() ? "selected" : "deselected"));
-}
 //**END**//
 
 

@@ -13,11 +13,21 @@ import org.springframework.stereotype.Service;
 public class PayMapperImpl {
     
     //Transaction
-    public TransactionDTO fromTransaction(Transaction transaction){
-        TransactionDTO transactionDTO=new TransactionDTO();
-        BeanUtils.copyProperties(transaction,transactionDTO);
-        return  transactionDTO;
+    public TransactionDTO fromTransaction(Transaction transaction) {
+        TransactionDTO transactionDTO = new TransactionDTO();
+        BeanUtils.copyProperties(transaction, transactionDTO);
+
+        // Set PaymentMethod and Merchant IDs if available
+        if (transaction.getPaymentMethod() != null) {
+            transactionDTO.setPaymentMethodId(transaction.getPaymentMethod().getPaymentMethodId());
+        }
+        if (transaction.getMerchant() != null) {
+            transactionDTO.setMerchantId(transaction.getMerchant().getMerchantId());
+        }
+
+        return transactionDTO;
     }
+
 
     public Transaction fromTransactionDTO(TransactionDTO transactionDTO){
         Transaction transaction=new Transaction();

@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface MerchantMethodsRepository extends JpaRepository<MerchantMethods,Long> {
     List<MerchantMethods> findByMerchantMerchantId(Long merchantId);
-
     MerchantMethods findByMerchantMerchantIdAndPaymentMethodPaymentMethodId(Long merchantId, Long paymentMethodId);
 }

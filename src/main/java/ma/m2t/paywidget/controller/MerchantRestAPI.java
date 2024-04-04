@@ -3,12 +3,13 @@ package ma.m2t.paywidget.controller;
 import lombok.AllArgsConstructor;
 import ma.m2t.paywidget.dto.MerchantDTO;
 import ma.m2t.paywidget.exceptions.MerchantNotFoundException;
-import ma.m2t.paywidget.repository.MerchantRepository;
+import ma.m2t.paywidget.model.PaymentMethod;
+import ma.m2t.paywidget.service.MerchantMethodsService;
 import ma.m2t.paywidget.service.MerchantService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin("*")
@@ -17,6 +18,7 @@ import java.util.List;
 public class MerchantRestAPI {
 
     private MerchantService merchantService;
+    private MerchantMethodsService merchantMethodsService;
 //    private MerchantRepository merchantRepository;
 
 //POST
@@ -42,47 +44,39 @@ public class MerchantRestAPI {
         return merchantService.getMerchantById(id);
     }
 
-//    @GetMapping("/permission")
-//    public Boolean testPermission(
-//            @RequestParam String hostname,
-//            @RequestParam String secretKey) {
-//
-//        Boolean hasPermission = merchantService.hasPermission(hostname, secretKey);
-//
-//        System.out.println("Hostname: " + hostname);
-//        System.out.println("Secret Key: " + secretKey);
-//        System.out.println("Has Permission: " + hasPermission);
-//
-//        return hasPermission;
-//    }
-@GetMapping("/permission")
-public Boolean testPermission(
-        @RequestParam String hostname,
-        @RequestParam String accessKey,
-        @RequestParam String merchantId,
-        @RequestParam String orderId,
-        @RequestParam double amount,
-        @RequestParam String currency,
-        @RequestParam String hmac) throws Exception {
+    @GetMapping("/methods/{merchantId}")
+    public List<Map<String, Object>> getMerchantPaymentMethods(@PathVariable Long merchantId) throws MerchantNotFoundException {
+        return merchantMethodsService.getMerchantPaymentMethods(merchantId);
+    }
 
-    Boolean hasPermission = merchantService.hasPermission(hostname, accessKey, merchantId, orderId, amount, currency, hmac);
+    @GetMapping("/permission")
+    public Boolean testPermission(
+            @RequestParam String hostname,
+            @RequestParam String accessKey,
+            @RequestParam String merchantId,
+            @RequestParam String orderId,
+            @RequestParam double amount,
+            @RequestParam String currency,
+            @RequestParam String hmac) throws Exception {
 
-    System.out.println("Hostname: " + hostname);
-    System.out.println("Secret Key: " + accessKey);
-    System.out.println("Merchant ID: " + merchantId);
-    System.out.println("Order ID: " + orderId);
-    System.out.println("Amount: " + amount);
-    System.out.println("Currency: " + currency);
-    System.out.println("HMAC: " + hmac);
-    System.out.println("Has Permission: " + hasPermission);
+        Boolean hasPermission = merchantService.hasPermission(hostname, accessKey, merchantId, orderId, amount, currency, hmac);
 
-    return hasPermission;
-}
+        System.out.println("Hostname: " + hostname);
+        System.out.println("Secret Key: " + accessKey);
+        System.out.println("Merchant ID: " + merchantId);
+        System.out.println("Order ID: " + orderId);
+        System.out.println("Amount: " + amount);
+        System.out.println("Currency: " + currency);
+        System.out.println("HMAC: " + hmac);
+        System.out.println("Has Permission: " + hasPermission);
+
+        return hasPermission;
+    }
 
 //UPDATE
     @PutMapping("/{merchantId}/payment-method/{paymentMethodId}")
     public void selectPaymentMethodInMerchant(@PathVariable Long merchantId, @PathVariable Long paymentMethodId) throws MerchantNotFoundException {
-        merchantService.selectPaymentMethodInMerchant(merchantId, paymentMethodId);
+        merchantMethodsService.selectPaymentMethodInMerchant(merchantId, paymentMethodId);
     }
 
 //DELETE

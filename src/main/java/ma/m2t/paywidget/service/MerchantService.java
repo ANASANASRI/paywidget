@@ -16,7 +16,7 @@ public interface MerchantService {
     //
     void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> paymentMethodIds) throws MerchantNotFoundException;
 
-///****************************************************************************************************
+///*****************************************************************************************************
 //Get
     List<MerchantDTO> getAllMerchants();
     List<MerchantDTO> getAllMerchantsByMethod(Long methodId);
@@ -29,7 +29,6 @@ public interface MerchantService {
 ///****************************************************************************************************
 //Update
     MerchantDTO UpdateMerchant(MerchantDTO merchantDTO);
-    void selectPaymentMethodInMerchant(Long merchantId, Long paymentMethodId) throws MerchantNotFoundException ;
 
 ///****************************************************************************************************
 //Delete
