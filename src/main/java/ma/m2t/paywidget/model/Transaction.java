@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -22,7 +24,7 @@ public class Transaction {
     private String currency;
     private String status;
 
-    private long timestamp;
+    private String timestamp;
 
     // Client * * *
     private String clientId;

@@ -16,6 +16,8 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -39,6 +41,16 @@ public class TransactionServiceImpl implements TransactionService{
 //    }
     @Override
     public TransactionDTO saveTransaction(TransactionDTO transactionDTO) {
+
+        // Obtenez la date actuelle
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        // Formattez la date actuelle dans le format requis
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        String formattedDateTime = currentDateTime.format(formatter);
+
+        // Définissez la date formatée comme timestamp dans TransactionDTO
+        transactionDTO.setTimestamp(formattedDateTime);
         Transaction transaction = dtoMapper.fromTransactionDTO(transactionDTO);
 
         // Set PaymentMethod and Merchant if IDs are available
@@ -55,7 +67,7 @@ public class TransactionServiceImpl implements TransactionService{
         return dtoMapper.fromTransaction(savedTransaction);
     }
 
-    ///****************************************************************************************************
+///****************************************************************************************************
 //Get/////////////////////
     @Override
     public List<TransactionDTO> getAllTransactionsByMerchant(Long merchantId) {

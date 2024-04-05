@@ -12,7 +12,7 @@ public interface MerchantMethodsService {
 
 ///****************************************************************************************************
 //Get/////////////////////
-List<Map<String, Object>> getMerchantPaymentMethods(Long merchantId) throws MerchantNotFoundException;
+    List<Map<String, Object>> getMerchantPaymentMethods(Long merchantId) throws MerchantNotFoundException;
 
 
 ///****************************************************************************************************
