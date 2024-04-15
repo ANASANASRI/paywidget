@@ -1,7 +1,9 @@
 package ma.m2t.paywidget.service.serviceImpl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ma.m2t.paywidget.dto.MerchantDTO;
 import ma.m2t.paywidget.dto.TransactionDTO;
 import ma.m2t.paywidget.mappers.PayMapperImpl;
 import ma.m2t.paywidget.model.Merchant;
@@ -18,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -31,7 +35,7 @@ public class TransactionServiceImpl implements TransactionService{
     private MerchantRepository merchantRepository;
     private PayMapperImpl dtoMapper;
 
-    ///****************************************************************************************************
+///****************************************************************************************************
 //Post/////////////////////
 //    @Override
 //    public TransactionDTO saveTransaction(TransactionDTO transactionDTO) {
@@ -70,18 +74,44 @@ public class TransactionServiceImpl implements TransactionService{
 ///****************************************************************************************************
 //Get/////////////////////
     @Override
+    public List<TransactionDTO> getAllTransactions() {
+        List<Transaction> transactions = transactionRepository.findAll();
+        List<TransactionDTO> transactionDTO=new ArrayList<>();
+        for (Transaction t:transactions){
+            transactionDTO.add(dtoMapper.fromTransaction(t));
+        }
+        return transactionDTO;
+    }
+    @Override
     public List<TransactionDTO> getAllTransactionsByMerchant(Long merchantId) {
-        return null;
+        Optional<Merchant> merchant = merchantRepository.findById(merchantId);
+        List<Transaction> transactions = transactionRepository.findAllByMerchant(merchant);
+        List<TransactionDTO> transactionDTO=new ArrayList<>();
+        for (Transaction t:transactions){
+            transactionDTO.add(dtoMapper.fromTransaction(t));
+        }
+        return transactionDTO;
     }
 
     @Override
     public List<TransactionDTO> getAllTransactionsByMethod(Long methodId) {
-        return null;
+        Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(methodId);
+        List<Transaction> transactions = transactionRepository.findAllByPaymentMethod(paymentMethod);
+        List<TransactionDTO> transactionDTO=new ArrayList<>();
+        for (Transaction t:transactions){
+            transactionDTO.add(dtoMapper.fromTransaction(t));
+        }
+        return transactionDTO;
     }
 
     @Override
     public TransactionDTO getTransactionById(Long transactionId) {
-        return null;
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+
+        TransactionDTO transactionDTO = dtoMapper.fromTransaction(transaction);
+
+        return transactionDTO;
     }
 
     @Override

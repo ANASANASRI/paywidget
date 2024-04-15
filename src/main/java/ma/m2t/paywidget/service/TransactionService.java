@@ -11,7 +11,8 @@ public interface TransactionService {
 
 ///****************************************************************************************************
 //Get
-    List<TransactionDTO> getAllTransactionsByMerchant(Long merchantId);
+    List<TransactionDTO> getAllTransactions();
+    List<TransactionDTO> getAllTransactionsByMerchant(Long merchant);
     List<TransactionDTO> getAllTransactionsByMethod(Long methodId);
     TransactionDTO getTransactionById(Long transactionId);
     String getTransactionStatus(Long transactionID);

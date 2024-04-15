@@ -29,7 +29,7 @@ public class TransactionDTO {
         this.amount = transaction.getAmount();
         this.currency = transaction.getCurrency();
         this.status = transaction.getStatus();
-        this.timestamp = transaction.getTimestamp(); // Convert Date to String
+        this.timestamp = transaction.getTimestamp();
         this.clientId = transaction.getClientId();
         this.clientName = transaction.getClientName();
         this.clientEmail = transaction.getClientEmail();

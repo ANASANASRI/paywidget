@@ -9,9 +9,11 @@ import ma.m2t.paywidget.model.Transaction;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PayMapperImpl {
-    
+
     //Transaction
     public TransactionDTO fromTransaction(Transaction transaction) {
         TransactionDTO transactionDTO = new TransactionDTO();
@@ -28,6 +30,13 @@ public class PayMapperImpl {
         return transactionDTO;
     }
 
+
+    public TransactionDTO fromTransactionBasic(Transaction transaction) {
+        TransactionDTO transactionDTO = new TransactionDTO();
+        BeanUtils.copyProperties(transaction, transactionDTO);
+
+        return transactionDTO;
+    }
 
     public Transaction fromTransactionDTO(TransactionDTO transactionDTO){
         Transaction transaction=new Transaction();
@@ -47,6 +56,8 @@ public class PayMapperImpl {
         BeanUtils.copyProperties(merchantDTO,merchant);
         return  merchant;
     }
+
+
 
     //Admin
 

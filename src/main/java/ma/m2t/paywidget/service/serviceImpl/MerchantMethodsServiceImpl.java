@@ -24,6 +24,7 @@ public class MerchantMethodsServiceImpl implements MerchantMethodsService {
     private MerchantRepository merchantRepository;
     private MerchantMethodsRepository merchantMethodsRepository;
     private PaymentMethodRepository paymentMethodRepository;
+
 ///****************************************************************************************************
 //Post/////////////////////
 

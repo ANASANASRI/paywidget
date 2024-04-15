@@ -1,5 +1,6 @@
 package ma.m2t.paywidget.service.serviceImpl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import ma.m2t.paywidget.dto.MerchantDTO;
 import ma.m2t.paywidget.dto.PaymentMethodDTO;
@@ -41,7 +42,7 @@ public class MerchantServiceImpl implements MerchantService {
 
 ///****************************************************************************************************
 ///POST/////////////////////
-// Save a new merchant and generate secret key
+    // Save merchant and generate secret key
     public MerchantDTO saveNewMerchant(MerchantDTO merchantDTO) {
 
         Merchant merchant = dtoMapper.fromMerchantDTO(merchantDTO);
@@ -69,7 +70,8 @@ public class MerchantServiceImpl implements MerchantService {
     public static boolean verifySecretKey(String secretKey, String hashedKey) {
         return BCrypt.checkpw(secretKey, hashedKey);
     }
-    // Send secret key SM
+    // Send secret key SMS
+
 //**END**//
 
 //
@@ -163,9 +165,28 @@ public void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> p
 ///UPDATE/////////////////////
 //
     @Override
-    public MerchantDTO UpdateMerchant(MerchantDTO merchantDTO) {
-        return null;
+    public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
+        Merchant merchantToUpdate = dtoMapper.fromMerchantDTO(merchantDTO);
+
+        Merchant existingMerchant = merchantRepository.findById(merchantDTO.getMerchantId())
+                .orElseThrow(() -> new EntityNotFoundException("Merchant not found"));
+
+        // Update the existing merchant with the values from the DTO
+        existingMerchant.setMerchantName(merchantToUpdate.getMerchantName());
+        // existingMerchant.setEmail(merchantToUpdate.getEmail());
+        //
+        //
+        //
+        //
+        //
+
+        // Save the updated merchant
+        Merchant updatedMerchant = merchantRepository.save(existingMerchant);
+
+        // Mapping from entity to DTO and returning
+        return dtoMapper.fromMerchant(updatedMerchant);
     }
+
 //**END**//
 
 //
@@ -209,6 +230,8 @@ public Boolean hasPermission(String hostname, String accessKey, String merchantI
     System.out.println("Merchant not found with provided hostname and secret key.");
     return false;
 }
+
+
 
     private String generateHmac(String merchantId, String orderId, double amount, String currency, String secretKey) {
         String data = merchantId + ':' + orderId + ':' + amount + ':' + currency;

@@ -79,6 +79,11 @@ public class MerchantRestAPI {
         merchantMethodsService.selectPaymentMethodInMerchant(merchantId, paymentMethodId);
     }
 
+    @PutMapping("/merchant/update")
+    public MerchantDTO updateCustomer(@RequestBody MerchantDTO merchantDTO){
+        return merchantService.updateMerchant(merchantDTO);
+    }
+
 //DELETE
     @DeleteMapping("/delete/{id}")
     public void DeleteByID(@PathVariable(name = "id") Long id){

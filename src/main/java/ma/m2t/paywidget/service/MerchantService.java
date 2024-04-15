@@ -28,7 +28,7 @@ public interface MerchantService {
 
 ///****************************************************************************************************
 //Update
-    MerchantDTO UpdateMerchant(MerchantDTO merchantDTO);
+    MerchantDTO updateMerchant(MerchantDTO merchantDTO);
 
 ///****************************************************************************************************
 //Delete
