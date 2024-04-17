@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ma.m2t.paywidget.enums.AneeActivite;
+import ma.m2t.paywidget.enums.Formejuridique;
 
 import java.util.List;
 
@@ -21,10 +23,18 @@ public class Marchand {
     // Marchand info
     private String marchandName;
     private String marchandDescription;
-    private String marchandSMS;
+    private String marchandPhone;
     private String marchandHost;
     private String marchandEmail;
     private String marchandLogoUrl;
+
+    // Marchand info private
+    private Formejuridique marchandFormejuridique;
+    private String marchandRcIf;
+    private String marchandSiegeAddresse;
+    private String marchandDgName;
+    private String marchandTypeActivite;
+    private AneeActivite marchandAnneeActivite;
 
 //    //Password
 //    private String marchandPassword;
