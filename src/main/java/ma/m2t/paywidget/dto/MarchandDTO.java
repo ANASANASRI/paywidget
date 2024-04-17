@@ -3,14 +3,14 @@ package ma.m2t.paywidget.dto;
 import lombok.Data;
 
 @Data
-public class MerchantDTO {
-    private Long merchantId;
+public class MarchandDTO {
+    private Long marchandId;
 
-    // Merchant info
-    private String merchantName;
-    private String merchantDescription;
-    private String merchantHost;
-    private String merchantLogoUrl;
+    // Marchand info
+    private String marchandName;
+    private String marchandDescription;
+    private String marchandHost;
+    private String marchandLogoUrl;
 
     // Callback
     private String callback;

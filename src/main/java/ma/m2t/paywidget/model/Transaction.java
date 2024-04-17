@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -41,12 +39,12 @@ public class Transaction {
     private PaymentMethod paymentMethod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Merchant merchant;
+    private Marchand marchand;
 
 
 }
 //    @Column(name = "payment_method_id")
 //    private Long paymentMethodId;
 //
-//    @Column(name = "merchant_id")
-//    private Long merchantId;
+//    @Column(name = "marchand_id")
+//    private Long marchandId;

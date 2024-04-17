@@ -18,7 +18,7 @@ public class TransactionDTO {
     private String hmac;
     private String notif;
     private Long paymentMethodId;
-    private Long merchantId;
+    private Long marchandId;
 
     public TransactionDTO() {
     }
@@ -38,8 +38,8 @@ public class TransactionDTO {
         if (transaction.getPaymentMethod() != null) {
             this.paymentMethodId = transaction.getPaymentMethod().getPaymentMethodId();
         }
-        if (transaction.getMerchant() != null) {
-            this.merchantId = transaction.getMerchant().getMerchantId();
+        if (transaction.getMarchand() != null) {
+            this.marchandId = transaction.getMarchand().getMarchandId();
         }
     }
 }

@@ -12,14 +12,14 @@ public interface TransactionService {
 ///****************************************************************************************************
 //Get
     List<TransactionDTO> getAllTransactions();
-    List<TransactionDTO> getAllTransactionsByMerchant(Long merchant);
+    List<TransactionDTO> getAllTransactionsByMarchand(Long marchand);
     List<TransactionDTO> getAllTransactionsByMethod(Long methodId);
     TransactionDTO getTransactionById(Long transactionId);
     String getTransactionStatus(Long transactionID);
 ///****************************************************************************************************
 //Update
     TransactionDTO updateTransaction(TransactionDTO transactionDTO);
-    void updateTransactionStatus(Long transactionId);
+    void updateTransactionStatus(Long transactionId , String newStatus);
 
 ///****************************************************************************************************
 //Delete

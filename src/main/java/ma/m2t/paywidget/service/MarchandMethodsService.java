@@ -1,23 +1,22 @@
 package ma.m2t.paywidget.service;
 
-import ma.m2t.paywidget.exceptions.MerchantNotFoundException;
-import ma.m2t.paywidget.model.PaymentMethod;
+import ma.m2t.paywidget.exceptions.MarchandNotFoundException;
 
 import java.util.List;
 import java.util.Map;
 
-public interface MerchantMethodsService {
+public interface MarchandMethodsService {
 ///****************************************************************************************************
 //Post/////////////////////
 
 ///****************************************************************************************************
 //Get/////////////////////
-    List<Map<String, Object>> getMerchantPaymentMethods(Long merchantId) throws MerchantNotFoundException;
+    List<Map<String, Object>> getMarchandPaymentMethods(Long marchandId) throws MarchandNotFoundException;
 
 
 ///****************************************************************************************************
 //Update/////////////////////
-    void selectPaymentMethodInMerchant(Long merchantId, Long paymentMethodId) throws MerchantNotFoundException;
+    void selectPaymentMethodInMarchand(Long marchandId, Long paymentMethodId) throws MarchandNotFoundException;
 
 ///****************************************************************************************************
 //Delete/////////////////////

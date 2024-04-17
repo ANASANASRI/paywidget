@@ -28,9 +28,9 @@ private TransactionService transactionService;
         return transactionService.getAllTransactions();
     }
 
-    @GetMapping("/byMerchant")
-    public List<TransactionDTO> getAllTransactionsByMerchant(@RequestParam Long merchantId) {
-        return transactionService.getAllTransactionsByMerchant(merchantId);
+    @GetMapping("/byMarchand")
+    public List<TransactionDTO> getAllTransactionsByMarchand(@RequestParam Long marchandId) {
+        return transactionService.getAllTransactionsByMarchand(marchandId);
     }
 
     @GetMapping("/byPaymentMethod")
@@ -43,7 +43,17 @@ private TransactionService transactionService;
         return transactionService.getTransactionById(transactionId);
     }
 
+    @GetMapping("/status/{transactionId}")
+    public String getTransactionStatus(@PathVariable Long transactionId) {
+        return transactionService.getTransactionStatus(transactionId);
+    }
+
 //UPDATE
+
+    @PutMapping("/changestatus/{transactionId}/{newstatus}")
+    public void updateTransactionStatus(@PathVariable Long transactionId,@PathVariable String newstatus) {
+        transactionService.updateTransactionStatus(transactionId,newstatus);
+    }
 
 //DELETE
 

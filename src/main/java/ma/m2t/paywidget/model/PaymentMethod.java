@@ -27,6 +27,6 @@ public abstract class PaymentMethod {
     private List<Transaction> transactions;
 
     @ManyToMany(mappedBy = "paymentMethods")
-    private List<Merchant> merchants;
+    private List<Marchand> marchands;
 
 }

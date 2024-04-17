@@ -2,26 +2,24 @@ package ma.m2t.paywidget.service.serviceImpl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import ma.m2t.paywidget.dto.MerchantDTO;
+import ma.m2t.paywidget.dto.MarchandDTO;
 import ma.m2t.paywidget.dto.PaymentMethodDTO;
-import ma.m2t.paywidget.exceptions.MerchantNotFoundException;
+import ma.m2t.paywidget.exceptions.MarchandNotFoundException;
 import ma.m2t.paywidget.mappers.PayMapperImpl;
-import ma.m2t.paywidget.model.Merchant;
-import ma.m2t.paywidget.model.MerchantMethods;
+import ma.m2t.paywidget.model.Marchand;
+import ma.m2t.paywidget.model.MarchandMethods;
 import ma.m2t.paywidget.model.PaymentMethod;
-import ma.m2t.paywidget.repository.MerchantMethodsRepository;
-import ma.m2t.paywidget.repository.MerchantRepository;
+import ma.m2t.paywidget.repository.MarchandMethodsRepository;
+import ma.m2t.paywidget.repository.MarchandRepository;
 import ma.m2t.paywidget.repository.PaymentMethodRepository;
-import ma.m2t.paywidget.service.MerchantService;
+import ma.m2t.paywidget.service.MarchandService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+
 import org.apache.commons.codec.binary.Hex;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -33,26 +31,26 @@ import java.util.*;
 @Transactional
 @AllArgsConstructor
 @CrossOrigin("*")
-public class MerchantServiceImpl implements MerchantService {
+public class MarchandServiceImpl implements MarchandService {
 
-    private MerchantRepository merchantRepository;
-    private MerchantMethodsRepository merchantMethodsRepository;
+    private MarchandRepository marchandRepository;
+    private MarchandMethodsRepository marchandMethodsRepository;
     private PaymentMethodRepository paymentMethodRepository;
     private PayMapperImpl dtoMapper;
 
 ///****************************************************************************************************
 ///POST/////////////////////
-    // Save merchant and generate secret key
-    public MerchantDTO saveNewMerchant(MerchantDTO merchantDTO) {
+    // Save marchand and generate secret key
+    public MarchandDTO saveNewMarchand(MarchandDTO marchandDTO) {
 
-        Merchant merchant = dtoMapper.fromMerchantDTO(merchantDTO);
+        Marchand marchand = dtoMapper.fromMarchandDTO(marchandDTO);
 
         String secretKey = generateSecretKey();
-        merchant.setSecretKey(secretKey);
+        marchand.setSecretKey(secretKey);
 
-        Merchant savedMerchant =merchantRepository.save(merchant);
+        Marchand savedMarchand = marchandRepository.save(marchand);
 
-        return dtoMapper.fromMerchant(savedMerchant);
+        return dtoMapper.fromMarchand(savedMarchand);
     }
 
     // Generate a secret key
@@ -75,14 +73,14 @@ public class MerchantServiceImpl implements MerchantService {
 //**END**//
 
 //
-public void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> paymentMethodIds) throws MerchantNotFoundException {
-    Merchant merchant = merchantRepository.findById(merchantId)
-            .orElseThrow(() -> new MerchantNotFoundException("Merchant Not found"));
+public void FirstAssociatePaymentMethodsToMarchand(Long marchandId, List<Long> paymentMethodIds) throws MarchandNotFoundException {
+    Marchand marchand = marchandRepository.findById(marchandId)
+            .orElseThrow(() -> new MarchandNotFoundException("Marchand Not found"));
 
-    // Retrieve the existing associations for this merchant
-    List<MerchantMethods> existingAssociations = merchantMethodsRepository.findByMerchantMerchantId(merchantId);
+    // Retrieve the existing associations for this marchand
+    List<MarchandMethods> existingAssociations = marchandMethodsRepository.findByMarchandMarchandId(marchandId);
     Set<Long> existingPaymentMethodIds = new HashSet<>();
-    for (MerchantMethods association : existingAssociations) {
+    for (MarchandMethods association : existingAssociations) {
         existingPaymentMethodIds.add(association.getPaymentMethod().getPaymentMethodId());
     }
 
@@ -93,19 +91,19 @@ public void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> p
             PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId)
                     .orElseThrow(() -> new IllegalArgumentException("Payment Method not found"));
 
-            // Create a new MerchantMethods entity
-            MerchantMethods merchantMethods = new MerchantMethods();
-            merchantMethods.setMerchant(merchant);
-            merchantMethods.setPaymentMethod(paymentMethod);
-            merchantMethods.setSelected(true);
+            // Create a new MarchandMethods entity
+            MarchandMethods marchandMethods = new MarchandMethods();
+            marchandMethods.setMarchand(marchand);
+            marchandMethods.setPaymentMethod(paymentMethod);
+            marchandMethods.setSelected(true);
 
-            merchantMethodsRepository.save(merchantMethods);
+            marchandMethodsRepository.save(marchandMethods);
         } else {
             // Update existing association if it exists
-            for (MerchantMethods existingAssociation : existingAssociations) {
+            for (MarchandMethods existingAssociation : existingAssociations) {
                 if (existingAssociation.getPaymentMethod().getPaymentMethodId().equals(paymentMethodId)) {
                     existingAssociation.setSelected(true); // Update isSelected to true
-                    merchantMethodsRepository.save(existingAssociation);
+                    marchandMethodsRepository.save(existingAssociation);
                     break;
                 }
             }
@@ -113,7 +111,7 @@ public void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> p
     }
 
     // Print out the names of associated payment methods
-    System.out.print("Merchant " + merchant.getMerchantName() + " has the following payment methods: ");
+    System.out.print("Marchand " + marchand.getMarchandName() + " has the following payment methods: ");
     List<PaymentMethod> paymentMethods = paymentMethodRepository.findAllById(paymentMethodIds);
     for (PaymentMethod p : paymentMethods) {
         System.out.print(p.getMethodName() + ", ");
@@ -127,35 +125,35 @@ public void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> p
 ///GET/////////////////////
 //
     @Override
-    public List<MerchantDTO> getAllMerchantsByMethod(Long methodId) {
+    public List<MarchandDTO> getAllMarchandsByMethod(Long methodId) {
         return null;
     }
 //**END**//
 
 //
     @Override
-    public List<MerchantDTO> getAllMerchants() {
-        List<Merchant> merchants = merchantRepository.findAll();
-        List<MerchantDTO> merchantsDTO=new ArrayList<>();
-        for (Merchant m:merchants){
-            merchantsDTO.add(dtoMapper.fromMerchant(m));
+    public List<MarchandDTO> getAllMarchands() {
+        List<Marchand> marchands = marchandRepository.findAll();
+        List<MarchandDTO> marchandsDTO=new ArrayList<>();
+        for (Marchand m: marchands){
+            marchandsDTO.add(dtoMapper.fromMarchand(m));
         }
-        return merchantsDTO;
+        return marchandsDTO;
     }
 //**END**//
 
 //
     @Override
-    public MerchantDTO getMerchantById(Long merchantId) throws MerchantNotFoundException{
-        Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new MerchantNotFoundException("Merchant Not found"));
-        return dtoMapper.fromMerchant(merchant);
+    public MarchandDTO getMarchandById(Long marchandId) throws MarchandNotFoundException {
+        Marchand marchand = marchandRepository.findById(marchandId)
+                .orElseThrow(() -> new MarchandNotFoundException("Marchand Not found"));
+        return dtoMapper.fromMarchand(marchand);
     }
 //**END**//
 
 //
     @Override
-    public List<PaymentMethodDTO> getAllMerchantMethods(Long merchantId) {
+    public List<PaymentMethodDTO> getAllMarchandMethods(Long marchandId) {
         return null;
     }
 //**END**//
@@ -165,26 +163,26 @@ public void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> p
 ///UPDATE/////////////////////
 //
     @Override
-    public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
-        Merchant merchantToUpdate = dtoMapper.fromMerchantDTO(merchantDTO);
+    public MarchandDTO updateMarchand(MarchandDTO marchandDTO) {
+        Marchand marchandToUpdate = dtoMapper.fromMarchandDTO(marchandDTO);
 
-        Merchant existingMerchant = merchantRepository.findById(merchantDTO.getMerchantId())
-                .orElseThrow(() -> new EntityNotFoundException("Merchant not found"));
+        Marchand existingMarchand = marchandRepository.findById(marchandDTO.getMarchandId())
+                .orElseThrow(() -> new EntityNotFoundException("Marchand not found"));
 
-        // Update the existing merchant with the values from the DTO
-        existingMerchant.setMerchantName(merchantToUpdate.getMerchantName());
-        // existingMerchant.setEmail(merchantToUpdate.getEmail());
+        // Update the existing marchand with the values from the DTO
+        existingMarchand.setMarchandName(marchandToUpdate.getMarchandName());
+        // existingMarchand.setEmail(marchandToUpdate.getEmail());
         //
         //
         //
         //
         //
 
-        // Save the updated merchant
-        Merchant updatedMerchant = merchantRepository.save(existingMerchant);
+        // Save the updated marchand
+        Marchand updatedMarchand = marchandRepository.save(existingMarchand);
 
         // Mapping from entity to DTO and returning
-        return dtoMapper.fromMerchant(updatedMerchant);
+        return dtoMapper.fromMarchand(updatedMarchand);
     }
 
 //**END**//
@@ -198,8 +196,8 @@ public void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> p
 ///DELETE/////////////////////
 //
     @Override
-    public void deleteMerchant(Long merchantId) {
-        merchantRepository.deleteById(merchantId);
+    public void deleteMarchand(Long marchandId) {
+        marchandRepository.deleteById(marchandId);
     }
 //**END**//
 
@@ -209,32 +207,34 @@ public void FirstAssociatePaymentMethodsToMerchant(Long merchantId, List<Long> p
 ///****************************************************************************************************
 ///CHECK PERMISSION/////////////////////
 //
-public Boolean hasPermission(String hostname, String accessKey, String merchantId, String orderId,
+public Boolean hasPermission(String hostname, String accessKey, String marchandId, String orderId,
                              double amount, String currency, String hmac){
-    List<Merchant> merchants = merchantRepository.findAll();
+    List<Marchand> marchands = marchandRepository.findAll();
 
-    for (Merchant merchant : merchants) {
+    for (Marchand marchand : marchands) {
         //verify the dehash secret key if equals to secretKey provided
-        if (merchant.getMerchantHost().equals(hostname) && merchant.getAccessKey().equals(accessKey)) {
-            String generatedHmac = generateHmac(merchantId, orderId, amount, currency, merchant.getSecretKey());
+        if ( marchand.getMarchandId().equals(Long.parseLong(marchandId)) &&  marchand.getMarchandHost().equals(hostname) && marchand.getAccessKey().equals(accessKey)) {
+            String generatedHmac = generateHmac(marchandId, orderId, amount, currency, marchand.getSecretKey());
             if (hmac.equals(generatedHmac)) {
-                System.out.println("HMAC Permission granted."+generatedHmac+"......"+merchant.getSecretKey());
+                System.out.println("HMAC Permission granted."+generatedHmac+"......"+ marchand.getSecretKey());
                 return true;
             } else {
-                System.out.println("HMAC verification failed."+generatedHmac+"......"+merchant.getSecretKey());
+                System.out.println("......"+marchandId+"......");
+
+                System.out.println("HMAC verification failed."+generatedHmac+"......"+ marchand.getSecretKey());
                 return false;
             }
         }
     }
 
-    System.out.println("Merchant not found with provided hostname and secret key.");
+    System.out.println("Marchand not found with provided hostname and secret key.");
     return false;
 }
 
 
 
-    private String generateHmac(String merchantId, String orderId, double amount, String currency, String secretKey) {
-        String data = merchantId + ':' + orderId + ':' + amount + ':' + currency;
+    private String generateHmac(String marchandId, String orderId, double amount, String currency, String secretKey) {
+        String data = marchandId + ':' + orderId + ':' + amount + ':' + currency;
         return hmacDigest(data, secretKey);
     }
 

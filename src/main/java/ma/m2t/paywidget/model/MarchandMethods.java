@@ -9,18 +9,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "merchant_paymentMethod")
-public class MerchantMethods {
+@Table(name = "marchand_paymentMethod")
+public class MarchandMethods {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // indicate if the merchant has selected this method
+    // indicate if the marchand has selected this method
     private boolean isSelected;
 
     @ManyToOne
-    @JoinColumn(name = "merchantId")
-    private Merchant merchant;
+    @JoinColumn(name = "marchandId")
+    private Marchand marchand;
 
     @ManyToOne
     @JoinColumn(name = "paymentMethodId")

@@ -12,21 +12,22 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Merchant {
+public class Marchand {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long merchantId;
+    private Long marchandId;
 
-    // Merchant info
-    private String merchantName;
-    private String merchantDescription;
-    private String merchantSMS;
-    private String merchantHost;
-    private String merchantLogoUrl;
+    // Marchand info
+    private String marchandName;
+    private String marchandDescription;
+    private String marchandSMS;
+    private String marchandHost;
+    private String marchandEmail;
+    private String marchandLogoUrl;
 
 //    //Password
-//    private String merchantPassword;
+//    private String marchandPassword;
 
     // Callback
     private String callback;
@@ -40,12 +41,12 @@ public class Merchant {
     private String secretKey;
 
     //
-    @OneToMany(mappedBy = "merchant")
+    @OneToMany(mappedBy = "marchand")
     private List<Transaction> transactions;
 
     @ManyToMany
-    @JoinTable(name = "merchant_paymentMethod",
-            joinColumns = @JoinColumn(name = "merchantId"),
+    @JoinTable(name = "marchand_paymentMethod",
+            joinColumns = @JoinColumn(name = "marchandId"),
             inverseJoinColumns = @JoinColumn(name = "paymentMethodId"))
     private List<PaymentMethod> paymentMethods;
 

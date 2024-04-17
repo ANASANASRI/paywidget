@@ -1,15 +1,11 @@
 package ma.m2t.paywidget.mappers;
 
-import ma.m2t.paywidget.dto.MerchantDTO;
-import ma.m2t.paywidget.dto.PaymentMethodDTO;
+import ma.m2t.paywidget.dto.MarchandDTO;
 import ma.m2t.paywidget.dto.TransactionDTO;
-import ma.m2t.paywidget.model.Merchant;
-import ma.m2t.paywidget.model.PaymentMethod;
+import ma.m2t.paywidget.model.Marchand;
 import ma.m2t.paywidget.model.Transaction;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class PayMapperImpl {
@@ -19,12 +15,12 @@ public class PayMapperImpl {
         TransactionDTO transactionDTO = new TransactionDTO();
         BeanUtils.copyProperties(transaction, transactionDTO);
 
-        // Set PaymentMethod and Merchant IDs if available
+        // Set PaymentMethod and Marchand IDs if available
         if (transaction.getPaymentMethod() != null) {
             transactionDTO.setPaymentMethodId(transaction.getPaymentMethod().getPaymentMethodId());
         }
-        if (transaction.getMerchant() != null) {
-            transactionDTO.setMerchantId(transaction.getMerchant().getMerchantId());
+        if (transaction.getMarchand() != null) {
+            transactionDTO.setMarchandId(transaction.getMarchand().getMarchandId());
         }
 
         return transactionDTO;
@@ -44,17 +40,17 @@ public class PayMapperImpl {
         return  transaction;
     }
 
-    //Merchant
-    public MerchantDTO fromMerchant(Merchant merchant){
-        MerchantDTO merchantDTO=new MerchantDTO();
-        BeanUtils.copyProperties(merchant,merchantDTO);
-        return  merchantDTO;
+    //Marchand
+    public MarchandDTO fromMarchand(Marchand marchand){
+        MarchandDTO marchandDTO =new MarchandDTO();
+        BeanUtils.copyProperties(marchand, marchandDTO);
+        return marchandDTO;
     }
 
-    public Merchant fromMerchantDTO(MerchantDTO merchantDTO){
-        Merchant merchant=new Merchant();
-        BeanUtils.copyProperties(merchantDTO,merchant);
-        return  merchant;
+    public Marchand fromMarchandDTO(MarchandDTO marchandDTO){
+        Marchand marchand =new Marchand();
+        BeanUtils.copyProperties(marchandDTO, marchand);
+        return marchand;
     }
 
 

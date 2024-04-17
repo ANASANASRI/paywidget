@@ -11,7 +11,7 @@ public interface MethodsService {
 
 ///****************************************************************************************************
 //Get
-    List<PaymentMethodDTO> getAllPaymentMethodsByMerchant(Long merchantId);
+    List<PaymentMethodDTO> getAllPaymentMethodsByMarchand(Long marchandId);
     List<PaymentMethodDTO> getAllPaymentMethodsByMethod(Long methodId);
     PaymentMethodDTO getPaymentMethodById(Long paymentMethodId);
 ///****************************************************************************************************

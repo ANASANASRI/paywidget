@@ -3,18 +3,15 @@ package ma.m2t.paywidget.service.serviceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ma.m2t.paywidget.dto.MerchantDTO;
 import ma.m2t.paywidget.dto.TransactionDTO;
 import ma.m2t.paywidget.mappers.PayMapperImpl;
-import ma.m2t.paywidget.model.Merchant;
+import ma.m2t.paywidget.model.Marchand;
 import ma.m2t.paywidget.model.PaymentMethod;
 import ma.m2t.paywidget.model.Transaction;
-import ma.m2t.paywidget.repository.MerchantMethodsRepository;
-import ma.m2t.paywidget.repository.MerchantRepository;
+import ma.m2t.paywidget.repository.MarchandRepository;
 import ma.m2t.paywidget.repository.PaymentMethodRepository;
 import ma.m2t.paywidget.repository.TransactionRepository;
 import ma.m2t.paywidget.service.TransactionService;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +29,7 @@ public class TransactionServiceImpl implements TransactionService{
 
     private TransactionRepository transactionRepository;
     private PaymentMethodRepository paymentMethodRepository;
-    private MerchantRepository merchantRepository;
+    private MarchandRepository marchandRepository;
     private PayMapperImpl dtoMapper;
 
 ///****************************************************************************************************
@@ -57,14 +54,14 @@ public class TransactionServiceImpl implements TransactionService{
         transactionDTO.setTimestamp(formattedDateTime);
         Transaction transaction = dtoMapper.fromTransactionDTO(transactionDTO);
 
-        // Set PaymentMethod and Merchant if IDs are available
+        // Set PaymentMethod and Marchand if IDs are available
         if (transactionDTO.getPaymentMethodId() != null) {
             PaymentMethod paymentMethod = paymentMethodRepository.findById(transactionDTO.getPaymentMethodId()).orElse(null);
             transaction.setPaymentMethod(paymentMethod);
         }
-        if (transactionDTO.getMerchantId() != null) {
-            Merchant merchant = merchantRepository.findById(transactionDTO.getMerchantId()).orElse(null);
-            transaction.setMerchant(merchant);
+        if (transactionDTO.getMarchandId() != null) {
+            Marchand marchand = marchandRepository.findById(transactionDTO.getMarchandId()).orElse(null);
+            transaction.setMarchand(marchand);
         }
 
         Transaction savedTransaction = transactionRepository.save(transaction);
@@ -83,9 +80,9 @@ public class TransactionServiceImpl implements TransactionService{
         return transactionDTO;
     }
     @Override
-    public List<TransactionDTO> getAllTransactionsByMerchant(Long merchantId) {
-        Optional<Merchant> merchant = merchantRepository.findById(merchantId);
-        List<Transaction> transactions = transactionRepository.findAllByMerchant(merchant);
+    public List<TransactionDTO> getAllTransactionsByMarchand(Long marchandId) {
+        Optional<Marchand> marchand = marchandRepository.findById(marchandId);
+        List<Transaction> transactions = transactionRepository.findAllByMarchand(marchand);
         List<TransactionDTO> transactionDTO=new ArrayList<>();
         for (Transaction t:transactions){
             transactionDTO.add(dtoMapper.fromTransaction(t));
@@ -116,19 +113,62 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Override
     public String getTransactionStatus(Long transactionID) {
-        return null;
+        Transaction transaction = transactionRepository.findById(transactionID)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+
+        return transaction.getStatus();
     }
+
+
+
 ///****************************************************************************************************
 //Update/////////////////////
+
+    @Override
+    public void updateTransactionStatus(Long transactionId, String newStatus) {
+
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+
+        // Validate newStatus
+        if (!isValidStatus(newStatus)) {
+            throw new IllegalArgumentException("Invalid status: " + newStatus);
+        }
+
+        // Check if the current status is "completed" or "Cancelled"
+        if (transaction.getStatus().equalsIgnoreCase("completed")) {
+            throw new IllegalStateException("Transaction is already completed and cannot be modified.");
+        } else if (transaction.getStatus().equalsIgnoreCase("Cancelled")) {
+            if (newStatus.equalsIgnoreCase("completed")) {
+                throw new IllegalStateException("Transaction is Cancelled and cannot be completed.");
+            }
+            throw new IllegalStateException("Transaction is already Cancelled and cannot be modified.");
+        }
+
+        // Update the status of the transaction
+        transaction.setStatus(newStatus);
+
+        // Save the updated transaction
+        transactionRepository.save(transaction);
+
+    }
+
+    private boolean isValidStatus(String status) {
+        String[] validStatusValues = {"completed", "pending", "Cancelled"};
+
+        for (String validStatus : validStatusValues) {
+            if (validStatus.equalsIgnoreCase(status)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public TransactionDTO updateTransaction(TransactionDTO transactionDTO) {
         return null;
     }
 
-    @Override
-    public void updateTransactionStatus(Long transactionId) {
-
-    }
 ///****************************************************************************************************
 //Delete/////////////////////
     @Override

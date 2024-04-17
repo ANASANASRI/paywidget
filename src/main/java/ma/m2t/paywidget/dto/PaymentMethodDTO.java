@@ -11,6 +11,6 @@ public class PaymentMethodDTO {
     private String methodDescription;
     private String methodIconUrl;
 
-    // indicate if the merchant has selected this method
+    // indicate if the marchand has selected this method
     private boolean isSelected;
 }
