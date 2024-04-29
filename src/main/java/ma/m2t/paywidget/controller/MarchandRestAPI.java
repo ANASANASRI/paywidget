@@ -78,7 +78,7 @@ public class MarchandRestAPI {
         marchandMethodsService.selectPaymentMethodInMarchand(marchandId, paymentMethodId);
     }
 
-    @PutMapping("/marchand/update")
+    @PutMapping("/update")
     public MarchandDTO updateCustomer(@RequestBody MarchandDTO marchandDTO){
         return marchandService.updateMarchand(marchandDTO);
     }

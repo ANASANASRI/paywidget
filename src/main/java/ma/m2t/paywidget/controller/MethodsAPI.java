@@ -10,4 +10,5 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RequestMapping("method")
 public class MethodsAPI {
+    
 }

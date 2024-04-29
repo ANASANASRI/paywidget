@@ -8,7 +8,6 @@ public interface TokenService {
     Token saveNewToken(Token token);
     void callback();
 
-
 ///****************************************************************************************************
 //Get
     String getToken(String requestDate,String organismId,String orderId,String orderAmount,String customerMail ,String customerPhone);

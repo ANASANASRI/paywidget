@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ma.m2t.paywidget.enums.AneeActivite;
 import ma.m2t.paywidget.enums.Formejuridique;
+import ma.m2t.paywidget.enums.Status;
 
 import java.util.List;
 
@@ -27,13 +28,17 @@ public class Marchand {
     private String marchandHost;
     private String marchandEmail;
     private String marchandLogoUrl;
+    @Enumerated(EnumType.STRING)
+    private Status marchandStatus;
 
     // Marchand info private
-    private Formejuridique marchandFormejuridique;
+    private String marchandTypeActivite;
     private String marchandRcIf;
     private String marchandSiegeAddresse;
     private String marchandDgName;
-    private String marchandTypeActivite;
+    @Enumerated(EnumType.STRING)
+    private Formejuridique marchandFormejuridique;
+    @Enumerated(EnumType.STRING)
     private AneeActivite marchandAnneeActivite;
 
 //    //Password

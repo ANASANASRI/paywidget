@@ -1,8 +1,11 @@
 package ma.m2t.paywidget.dto;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 import ma.m2t.paywidget.enums.AneeActivite;
 import ma.m2t.paywidget.enums.Formejuridique;
+import ma.m2t.paywidget.enums.Status;
 
 @Data
 public class MarchandDTO {
@@ -15,15 +18,16 @@ public class MarchandDTO {
     private String marchandHost;
     private String marchandEmail;
     private String marchandLogoUrl;
+    private Status marchandStatus;
 
-
-    // Marchand private info
-    private Formejuridique marchandFormejuridique;
+    // Marchand info private
+    private String marchandTypeActivite;
     private String marchandRcIf;
     private String marchandSiegeAddresse;
     private String marchandDgName;
-    private String marchandTypeActivite;
+    private Formejuridique marchandFormejuridique;
     private AneeActivite marchandAnneeActivite;
+
 
     // Callback
     private String callback;
