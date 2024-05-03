@@ -16,6 +16,7 @@ public interface TransactionService {
     List<TransactionDTO> getAllTransactionsByMethod(Long methodId);
     TransactionDTO getTransactionById(Long transactionId);
     String getTransactionStatus(Long transactionID);
+    int getNumberOfTransactionsByClientAndMarchand(String clientName, Long marchandId);
 ///****************************************************************************************************
 //Update
     TransactionDTO updateTransaction(TransactionDTO transactionDTO);

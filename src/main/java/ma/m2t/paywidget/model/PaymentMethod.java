@@ -11,9 +11,9 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING) // Specify discriminator column type
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public abstract class PaymentMethod {
+@NoArgsConstructor
+public class PaymentMethod {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

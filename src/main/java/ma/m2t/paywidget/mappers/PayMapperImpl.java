@@ -2,9 +2,11 @@ package ma.m2t.paywidget.mappers;
 
 import ma.m2t.paywidget.dto.DemandeDTO;
 import ma.m2t.paywidget.dto.MarchandDTO;
+import ma.m2t.paywidget.dto.PaymentMethodDTO;
 import ma.m2t.paywidget.dto.TransactionDTO;
 import ma.m2t.paywidget.model.Demande;
 import ma.m2t.paywidget.model.Marchand;
+import ma.m2t.paywidget.model.PaymentMethod;
 import ma.m2t.paywidget.model.Transaction;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -69,7 +71,19 @@ public class PayMapperImpl {
         return demande;
     }
 
-    //Admin
+    //Payment
+
+    public PaymentMethodDTO fromPaymentMethod(PaymentMethod paymentMethod){
+        PaymentMethodDTO paymentMethodDTO = new PaymentMethodDTO();
+        BeanUtils.copyProperties(paymentMethod, paymentMethodDTO);
+        return  paymentMethodDTO;
+    }
+
+    public PaymentMethod fromPaymentMethodDTO(PaymentMethodDTO paymentMethodDTO){
+        PaymentMethod paymentMethod = new PaymentMethod();
+        BeanUtils.copyProperties(paymentMethodDTO, paymentMethod);
+        return  paymentMethod;
+    }
 
 
 //    public XXXXXDTO fromXXXXX(XXXXX xxxxx){

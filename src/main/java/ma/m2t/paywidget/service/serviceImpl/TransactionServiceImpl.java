@@ -119,6 +119,24 @@ public class TransactionServiceImpl implements TransactionService{
         return transaction.getStatus();
     }
 
+    @Override
+    public int getNumberOfTransactionsByClientAndMarchand(String clientName, Long marchandId) {
+        // Check if clientName and merchantId are not null
+        if (clientName == null || marchandId == null) {
+            throw new IllegalArgumentException("Client name and merchant ID cannot be null");
+        }
+
+        // Retrieve the list of transactions for the given merchant
+        List<TransactionDTO> transactions = getAllTransactionsByMarchand(marchandId);
+
+        // Count the number of transactions for the specified client
+        long transactionCount = transactions.stream()
+                .filter(transaction -> clientName.equals(transaction.getClientName()))
+                .count();
+
+        // Convert the count to an integer
+        return (int) transactionCount;
+    }
 
 
 ///****************************************************************************************************
