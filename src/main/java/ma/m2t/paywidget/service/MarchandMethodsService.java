@@ -20,4 +20,11 @@ public interface MarchandMethodsService {
 
 ///****************************************************************************************************
 //Delete/////////////////////
+
+
+////////////////////////////////////////
+
+    boolean findStatusMarchandPaymentByMarchandIdAndPaymentMethodId(Long marchandId, Long paymentMethodId);
+
+
 }

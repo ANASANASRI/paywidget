@@ -88,6 +88,20 @@ public class MarchandMethodsServiceImpl implements MarchandMethodsService {
     }
 ////////
 
+    @Override
+    public boolean findStatusMarchandPaymentByMarchandIdAndPaymentMethodId(Long marchandId, Long paymentMethodId) {
+        MarchandMethods existingAssociation = marchandMethodsRepository.findByMarchandMarchandIdAndPaymentMethodPaymentMethodId(marchandId, paymentMethodId);
+
+        if (existingAssociation != null) {
+            // Si une association existe pour le marchand et la méthode de paiement donnés,
+            // retourne l'état de l'association
+            return existingAssociation.isSelected();
+        }
+
+        return false; // Si aucune association n'est trouvée, retourne false
+    }
+
+
 ///****************************************************************************************************
 //Delete/////////////////////
 

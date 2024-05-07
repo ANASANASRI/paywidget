@@ -13,6 +13,7 @@ import ma.m2t.paywidget.repository.MarchandMethodsRepository;
 import ma.m2t.paywidget.repository.MarchandRepository;
 import ma.m2t.paywidget.repository.PaymentMethodRepository;
 import ma.m2t.paywidget.service.MarchandService;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -133,13 +134,14 @@ public void FirstAssociatePaymentMethodsToMarchand(Long marchandId, List<Long> p
 //
     @Override
     public List<MarchandDTO> getAllMarchands() {
-        List<Marchand> marchands = marchandRepository.findAll();
-        List<MarchandDTO> marchandsDTO=new ArrayList<>();
-        for (Marchand m: marchands){
+        List<Marchand> marchands = marchandRepository.findAll(Sort.by(Sort.Direction.ASC, "marchandId"));
+        List<MarchandDTO> marchandsDTO = new ArrayList<>();
+        for (Marchand m : marchands) {
             marchandsDTO.add(dtoMapper.fromMarchand(m));
         }
         return marchandsDTO;
     }
+
 //**END**//
 
 //
@@ -171,12 +173,22 @@ public void FirstAssociatePaymentMethodsToMarchand(Long marchandId, List<Long> p
 
         // Update the existing marchand with the values from the DTO
         existingMarchand.setMarchandName(marchandToUpdate.getMarchandName());
-        // existingMarchand.setEmail(marchandToUpdate.getEmail());
-        //
-        //
-        //
-        //
-        //
+        existingMarchand.setMarchandDescription(marchandToUpdate.getMarchandDescription());
+        existingMarchand.setMarchandPhone(marchandToUpdate.getMarchandPhone());
+        existingMarchand.setMarchandHost(marchandToUpdate.getMarchandHost());
+        existingMarchand.setMarchandEmail(marchandToUpdate.getMarchandEmail());
+        existingMarchand.setMarchandLogoUrl(marchandToUpdate.getMarchandLogoUrl());
+        existingMarchand.setMarchandStatus(marchandToUpdate.getMarchandStatus());
+
+        // Marchand info private
+        existingMarchand.setMarchandTypeActivite(marchandToUpdate.getMarchandTypeActivite());
+        existingMarchand.setMarchandRcIf(marchandToUpdate.getMarchandRcIf());
+        existingMarchand.setMarchandSiegeAddresse(marchandToUpdate.getMarchandSiegeAddresse());
+        existingMarchand.setMarchandDgName(marchandToUpdate.getMarchandDgName());
+        existingMarchand.setMarchandFormejuridique(marchandToUpdate.getMarchandFormejuridique());
+        existingMarchand.setMarchandAnneeActivite(marchandToUpdate.getMarchandAnneeActivite());
+
+
 
         // Save the updated marchand
         Marchand updatedMarchand = marchandRepository.save(existingMarchand);

@@ -12,6 +12,7 @@ import ma.m2t.paywidget.service.MethodsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,22 +27,18 @@ public class MethodsServiceImpl implements MethodsService{
     private MarchandRepository marchandRepository;
     private PaymentMethodRepository paymentMethodReposirory;
     private PayMapperImpl dtoMapper;
-    
+
     @Override
     public List<PaymentMethodDTO> listPaymentMethod() {
         List<PaymentMethod> paymentMethods = paymentMethodReposirory.findAll();
         List<PaymentMethodDTO> paymentMethodDTOS = paymentMethods.stream()
+                .sorted(Comparator.comparing(PaymentMethod::getPaymentMethodId)) // Sorting by ID
                 .map(paymentMethod -> dtoMapper.fromPaymentMethod(paymentMethod))
                 .collect(Collectors.toList());
-    /*
-    List<MerchantDTO> merchantDTOS = new ArrayList<>();
-    for (Merchant merchant : merchants) {
-        MerchantDTO merchantDTO = dtoMapper.fromMerchant(merchant);
-        merchantDTOS.add(merchantDTO);
-    }
-    */
+
         return paymentMethodDTOS;
     }
+
 
     @Override
     public PaymentMethodDTO updatePaymentMethod(PaymentMethodDTO paymentMethodDTO) {
