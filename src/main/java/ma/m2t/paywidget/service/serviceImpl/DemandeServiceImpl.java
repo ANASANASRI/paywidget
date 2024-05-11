@@ -8,9 +8,11 @@ import ma.m2t.paywidget.mappers.PayMapperImpl;
 import ma.m2t.paywidget.model.Demande;
 import ma.m2t.paywidget.repository.DemandeRepository;
 import ma.m2t.paywidget.service.DemandeService;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 public class DemandeServiceImpl implements DemandeService {
     private final DemandeRepository demandeRepository;
     private final PayMapperImpl payMapper;
+//    private SimpMessagingTemplate messagingTemplate;
+
 
 
     @Override
@@ -31,6 +35,8 @@ public class DemandeServiceImpl implements DemandeService {
         demandeDTO.setDemandeIsVerified(false);
         Demande demande = payMapper.fromDemandeDTO(demandeDTO);
         Demande savedDemande = demandeRepository.save(demande);
+//        // After saving the demand, send it to WebSocket clients
+//        messagingTemplate.convertAndSend("/topic/newDemande", demandeDTO);
         return payMapper.fromDemande(savedDemande);
     }
 
@@ -73,4 +79,17 @@ public class DemandeServiceImpl implements DemandeService {
         // Implement logic to save merchand here
         return payMapper.fromDemande(savedDemande);
     }
+
+
+///****************************************************************************************************
+    /// SEE
+
+    @Override
+    public Flux<DemandeDTO> getAllDemandesNotVerifiedSEE() {
+        return Flux.defer(() ->
+                Flux.fromIterable(demandeRepository.findAllByDemandeIsVerifiedFalse())
+                        .map(payMapper::fromDemande)
+        );
+    }
+
 }

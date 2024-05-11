@@ -10,6 +10,7 @@ import ma.m2t.paywidget.service.MarchandService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -77,4 +78,15 @@ public class DemandeApi {
 
         return new ResponseEntity<>(updatedDemande, HttpStatus.OK);
     }
+
+
+
+///****************************************************************************************************
+    /// SSE
+
+    @GetMapping("/not-verified-sse")
+    public Flux<DemandeDTO> getAllDemandesNotVerifiedSEE() {
+        return demandeService.getAllDemandesNotVerifiedSEE();
+    }
+
 }

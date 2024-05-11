@@ -3,6 +3,7 @@ package ma.m2t.paywidget.service;
 import ma.m2t.paywidget.dto.DemandeDTO;
 import ma.m2t.paywidget.dto.PaymentMethodDTO;
 import ma.m2t.paywidget.exceptions.MarchandNotFoundException;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -33,5 +34,9 @@ public interface DemandeService {
 ///****************************************************************************************************
 //Delete
 
+
+///****************************************************************************************************
+    /////////////// SEE
+    public Flux<DemandeDTO> getAllDemandesNotVerifiedSEE();
 
 }
