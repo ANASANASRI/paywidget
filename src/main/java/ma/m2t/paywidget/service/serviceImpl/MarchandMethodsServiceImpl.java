@@ -42,7 +42,9 @@ public class MarchandMethodsServiceImpl implements MarchandMethodsService {
         List<Map<String, Object>> paymentMethods = new ArrayList<>();
 
         for (MarchandMethods association : existingAssociations) {
-            existingPaymentMethodIds.add(association.getPaymentMethod().getPaymentMethodId());
+            if (association.isSelected()){
+                existingPaymentMethodIds.add(association.getPaymentMethod().getPaymentMethodId());
+            }
         }
 
         for (Long paymentMethodId : existingPaymentMethodIds) {
