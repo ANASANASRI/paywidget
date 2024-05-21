@@ -31,6 +31,10 @@ public interface DemandeService {
     // Set (verified=true Accepted=true)  and  Save merchand
     DemandeDTO UpdateDemandeAccepted(Long demandeId) throws MarchandNotFoundException;
 
+    DemandeDTO UpdateDemandeValuesAndAccepted(Long demandeId,DemandeDTO demandeDTO) throws MarchandNotFoundException;
+
+    DemandeDTO UpdateDemandeValues(Long demandeId,DemandeDTO demandeDTO) throws MarchandNotFoundException;
+
 ///****************************************************************************************************
 //Delete
 

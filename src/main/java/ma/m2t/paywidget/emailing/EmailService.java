@@ -32,7 +32,7 @@ public class EmailService {
         Resource imageSource = new ClassPathResource(imagePath);
 
         String header = "Cher "+toEmail+",\n\n";
-        String footer = "\n\nCordialement,\nPayPik";
+        String footer = "\n\nCordialement,\nPayPik\n";
 
         String verificationMessage = "Nous vous remercions d'avoir soumis votre demande pour devenir un marchand avec nous. Nous tenons à vous informer que nous avons bien reçu votre demande et que notre équipe est actuellement en train de la vérifier.\n\nNous vous prions de bien vouloir patienter pendant que nous examinons attentivement votre demande. Nous vous assurons que nous mettons tout en œuvre pour traiter votre demande dans les plus brefs délais.\n\nDans les prochaines 24 heures, vous recevrez un autre email de notre part vous informant de la décision concernant votre demande. Nous vous prions de consulter régulièrement votre boîte de réception, y compris votre dossier de spam, au cas où notre email serait dirigé là-bas par erreur.\n\nNous vous remercions de votre intérêt à rejoindre notre réseau de marchands. Si vous avez des questions ou des préoccupations en attendant, n'hésitez pas à nous contacter à paypik.m2t@gmail.com .";
 
@@ -75,7 +75,7 @@ public class EmailService {
         Resource imageSource = new ClassPathResource(imagePath);
 
         String header = "Cher " + toEmail + ",\n\n";
-        String footer = "\n\nCordialement,\nPayPik";
+        String footer = "\n\nCordialement,\nPayPik\n";
 
         String acceptanceMessage = "Nous sommes ravis de vous informer que votre demande pour devenir un marchand avec nous a été acceptée !\n\nFélicitations ! Vous êtes désormais officiellement membre de notre réseau de marchands. Nous sommes impatients de travailler avec vous et de vous soutenir dans la croissance de votre activité.\n\nDans les prochains jours, vous recevrez des informations supplémentaires sur les prochaines étapes à suivre pour commencer à vendre sur notre plateforme. Si vous avez des questions ou avez besoin d'assistance, n'hésitez pas à nous contacter à paypik.m2t@gmail.com.\n\nEncore une fois, bienvenue dans notre communauté de marchands. Nous sommes ravis de vous avoir avec nous !";
 
@@ -117,7 +117,7 @@ public class EmailService {
         Resource imageSource = new ClassPathResource(imagePath);
 
         String header = "Cher "+toEmail+",\n\n";
-        String footer = "\n\nCordialement,\nPayPik";
+        String footer = "\n\nCordialement,\nPayPik\n";
 
         String rejectionMessage = "Nous regrettons de vous informer que votre demande pour devenir un marchand avec nous a été rejetée.\n\nNous avons examiné attentivement votre demande, mais malheureusement, nous ne sommes pas en mesure de l'approuver pour le moment. Veuillez noter que cela ne reflète en rien sur vous en tant qu'individu ou sur la qualité de votre entreprise.\n\nNous vous remercions pour l'intérêt que vous avez porté à rejoindre notre réseau de marchands. Pour plus de détails sur la décision, veuillez contacter l'équipe commerciale à l'adresse suivante : paypik.m2t.commercial@gmail.com.\n\nNous vous souhaitons beaucoup de succès dans vos futurs projets.";
 
