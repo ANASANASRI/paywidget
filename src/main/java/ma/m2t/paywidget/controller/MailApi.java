@@ -31,4 +31,13 @@ public class MailApi {
         return "Success Rejected";
     }
 
+    //Send Mail
+    @PostMapping("/send-email")
+    public void sendEmail(
+            @RequestParam("subject") String subject,
+            @RequestParam("nom") String nom,
+            @RequestParam("message") String message) {
+        emailService.sendEmail(subject, nom, message);
+    }
+
 }

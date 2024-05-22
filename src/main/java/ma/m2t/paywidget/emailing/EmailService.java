@@ -3,8 +3,11 @@ package ma.m2t.paywidget.emailing;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -147,5 +150,25 @@ public class EmailService {
         javaMailSender.send(mimeMessage);
 
         System.out.println("Mail sent to " + toEmail);
+    }
+
+
+
+    //////////////////////////////// Send Mail
+
+    @Autowired
+    private JavaMailSender emailSender;
+
+    public void sendEmail(String subject, String nom, String message) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo("paypik.m2t@gmail.com");
+        mailMessage.setSubject("Client: " + subject);
+        mailMessage.setText("From: " + nom + "\n\n" + message);
+
+        try {
+            emailSender.send(mailMessage);
+        } catch (MailException e) {
+            e.printStackTrace();
+        }
     }
 }
