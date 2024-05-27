@@ -56,7 +56,6 @@ public class EmailService {
 
         mimeMessageHelper.setSubject("Confirmation de réception de votre demande");
 
-
 //        try {
 //            Resource resource = new ClassPathResource("static/images/emailaccepted.jpg");
 //            mimeMessageHelper.addAttachment(Objects.requireNonNull(resource.getFilename()), resource);
@@ -64,6 +63,7 @@ public class EmailService {
 //            // Handle the exception
 //            e.printStackTrace();
 //        }
+
         javaMailSender.send(mimeMessage);
 
         System.out.println("Mail sent to " + toEmail);
@@ -96,15 +96,6 @@ public class EmailService {
         mimeMessageHelper.addInline("image", imageSource, "image/png");
 
         mimeMessageHelper.setSubject("Confirmation de votre demande acceptée");
-
-
-//        try {
-//            Resource resource = new ClassPathResource("static/images/emailaccepted.jpg");
-//            mimeMessageHelper.addAttachment(Objects.requireNonNull(resource.getFilename()), resource);
-//        } catch (Exception e) {
-//            // Handle the exception
-//            e.printStackTrace();
-//        }
 
         javaMailSender.send(mimeMessage);
 
@@ -140,19 +131,10 @@ public class EmailService {
 
         mimeMessageHelper.setSubject("Notification de votre demande rejetée");
 
-//        try {
-//            Resource resource = new ClassPathResource("static/images/emailaccepted.jpg");
-//            mimeMessageHelper.addAttachment(Objects.requireNonNull(resource.getFilename()), resource);
-//        } catch (Exception e) {
-//            // Handle the exception
-//            e.printStackTrace();
-//        }
         javaMailSender.send(mimeMessage);
 
         System.out.println("Mail sent to " + toEmail);
     }
-
-
 
     //////////////////////////////// Send Mail
 

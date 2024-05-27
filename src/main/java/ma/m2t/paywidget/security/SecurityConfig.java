@@ -1,5 +1,13 @@
 package ma.m2t.paywidget.security;
 
+// AuthController
+// User Role E-Role
+// payload --> request / response
+// security .jwt
+// services --> ChangePasswordRequest
+// WebSecurityConfig
+
+
 //import com.nimbusds.jose.jwk.source.ImmutableSecret;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.beans.factory.annotation.Value;
@@ -28,15 +36,16 @@ package ma.m2t.paywidget.security;
 //import org.springframework.web.cors.CorsConfiguration;
 //import org.springframework.web.cors.CorsConfigurationSource;
 //import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-//
+
 //import javax.crypto.SecretKey;
 //import javax.crypto.spec.SecretKeySpec;
 //import java.nio.charset.StandardCharsets;
 //import java.util.List;
-//
+
 //@Configuration
 //@EnableWebSecurity
 //@EnableMethodSecurity(prePostEnabled = true)
+
 public class SecurityConfig {
 //    @Value("${jwt.secret}")
 //    private String secretKey;

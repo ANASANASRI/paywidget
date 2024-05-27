@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import ma.m2t.paywidget.dto.MarchandDTO;
 import ma.m2t.paywidget.dto.PaymentMethodDTO;
+import ma.m2t.paywidget.enums.Status;
 import ma.m2t.paywidget.exceptions.MarchandNotFoundException;
 import ma.m2t.paywidget.mappers.PayMapperImpl;
 import ma.m2t.paywidget.model.Marchand;
@@ -189,7 +190,6 @@ public void FirstAssociatePaymentMethodsToMarchand(Long marchandId, List<Long> p
         existingMarchand.setMarchandAnneeActivite(marchandToUpdate.getMarchandAnneeActivite());
 
 
-
         // Save the updated marchand
         Marchand updatedMarchand = marchandRepository.save(existingMarchand);
 
@@ -225,7 +225,7 @@ public Boolean hasPermission(String hostname, String accessKey, String marchandI
 
     for (Marchand marchand : marchands) {
         //verify the dehash secret key if equals to secretKey provided
-        if ( marchand.getMarchandId().equals(Long.parseLong(marchandId)) &&  marchand.getMarchandHost().equals(hostname) && marchand.getAccessKey().equals(accessKey)) {
+        if ( marchand.getMarchandId().equals(Long.parseLong(marchandId)) &&  marchand.getMarchandHost().equals(hostname) && marchand.getAccessKey().equals(accessKey) && marchand.getMarchandStatus().equals(Status.Active)) {
             String generatedHmac = generateHmac(marchandId, orderId, amount, currency, marchand.getSecretKey());
             if (hmac.equals(generatedHmac)) {
                 System.out.println("HMAC Permission granted."+generatedHmac+"......"+ marchand.getSecretKey());

@@ -41,8 +41,8 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     private Marchand marchand;
 
-
 }
+
 //    @Column(name = "payment_method_id")
 //    private Long paymentMethodId;
 //
