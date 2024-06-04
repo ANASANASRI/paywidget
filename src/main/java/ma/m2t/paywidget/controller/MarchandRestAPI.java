@@ -72,6 +72,17 @@ public class MarchandRestAPI {
         return hasPermission;
     }
 
+    /*usin for authenticated by marchand */
+    @GetMapping("/marchandName/{marchandName}")
+    public int findMarchandIdbyMarchandName(@PathVariable String marchandName) {
+        return marchandService.findMarchandIdbyMarchandName(marchandName);
+    }
+
+    @GetMapping("/findById/{id}")
+    public MarchandDTO getMarchandById(@PathVariable(name = "id") Long marchandId) throws MarchandNotFoundException {
+        return marchandService.findMarchandById(marchandId);
+    }
+    
 //UPDATE
     @PutMapping("/{marchandId}/payment-method/{paymentMethodId}")
     public void selectPaymentMethodInMarchand(@PathVariable Long marchandId, @PathVariable Long paymentMethodId) throws MarchandNotFoundException {

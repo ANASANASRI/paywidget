@@ -25,12 +25,19 @@ public interface MarchandService {
     Boolean hasPermission(String hostname, String accessKey, String marchandId, String orderId,
                           double amount, String currency, String hmac);
 
-///****************************************************************************************************
+    int findMarchandIdbyMarchandName(String marchandName);
+
+    MarchandDTO findMarchandById(Long id) throws MarchandNotFoundException;
+
+
+
+    ///****************************************************************************************************
 //Update
     MarchandDTO updateMarchand(MarchandDTO marchandDTO);
 
 ///****************************************************************************************************
 //Delete
     void deleteMarchand(Long marchandId);
+
 
 }

@@ -272,6 +272,29 @@ public Boolean hasPermission(String hostname, String accessKey, String marchandI
         }
     }
 
+    ////////////////////////////////////////////
+
+    @Override
+    public int findMarchandIdbyMarchandName(String marchandName) {
+        // Récupérer le marchand correspondant au nom donné
+        Marchand marchand = marchandRepository.findByMarchandName(marchandName)
+                .orElseThrow(() -> new EntityNotFoundException("Marchand not found with name: " + marchandName));
+
+        // Retourner l'ID du marchand
+        return marchand.getMarchandId().intValue(); // Si l'ID est de type Long, vous pouvez le convertir en int si nécessaire
+    }
+
+    @Override
+    public MarchandDTO findMarchandById(Long id) {
+        Optional<Marchand> optionalMarchand = marchandRepository.findById(id);
+        if (optionalMarchand.isPresent()) {
+            return dtoMapper.fromMarchand(optionalMarchand.get());
+        } else {
+            throw new EntityNotFoundException("Marchand not found with ID: " + id);
+        }
+    }
+
+
 //    private String hmacDigest(String data, String key, String algorithm) {
 //        try {
 //            Mac mac = Mac.getInstance(algorithm);
