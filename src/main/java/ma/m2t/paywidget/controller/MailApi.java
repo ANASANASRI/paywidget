@@ -31,6 +31,20 @@ public class MailApi {
         return "Success Rejected";
     }
 
+    // email send password
+    @PostMapping("/commercial/password")
+    public String sendPasswordCommercialMail(String toEmail, String username, String password) throws MessagingException {
+        this.emailService.sendPasswordCommercialEmail(toEmail, username, password);
+        return "Password Email Sent Successfully";
+    }
+
+    @PostMapping("/marchand/password")
+    public String sentpasswordMarchandMail(String toEmail, String username, String password) throws MessagingException {
+        this.emailService.sendPasswordMarchandEmail(toEmail, username, password);
+        return "Password Email Sent Successfully";
+    }
+
+
     //Send Mail
     @PostMapping("/send-email")
     public void sendEmail(
