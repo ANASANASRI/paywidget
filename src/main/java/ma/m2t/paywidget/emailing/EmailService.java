@@ -186,6 +186,47 @@ public class EmailService {
         System.out.println("Mail sent to " + toEmail);
     }
 
+    ///////////////////////////////////////// sendPasswordAdminEmail
+
+    public void sendPasswordAdminEmail(String toEmail, String username, String password) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+        // Load the image file
+        String imagePath = "static/images/footer.png";
+        Resource imageSource = new ClassPathResource(imagePath);
+
+        String header = "Cher " + username + ",\n\n";
+        String footer = "\n\nCordialement,\nL'équipe PayPik\n";
+
+        String internalMessage = "Bienvenue dans l'équipe Admin de PayPik !\n\n"
+                + "Nous sommes ravis de vous avoir parmi nous et nous sommes impatients de collaborer avec vous pour atteindre de nouveaux sommets.\n\n"
+                + "Voici vos identifiants de connexion :\n"
+                + "Nom d'utilisateur : <b>" + username + "</b>\n"
+                + "Mot de passe temporaire : <b>" + password + "</b>\n\n"
+                + "Pour des raisons de sécurité, veuillez mettre à jour votre mot de passe dans la section 'Profil' dès que possible.\n\n"
+                + "Si vous avez des questions ou avez besoin d'assistance, n'hésitez pas à nous contacter.\n\n"
+                + "Encore une fois, bienvenue dans l'équipe et nous sommes heureux de vous compter parmi nous !";
+
+        String completeMessage = header + internalMessage + footer;
+
+        // HTML content with image
+        String htmlContentWithImage = completeMessage.replace("\n", "<br>") + "<br><img src='cid:image' style='width:100%; max-width:700px;'>";
+
+        mimeMessageHelper.setFrom("paypik.m2t@gmail.com");
+        mimeMessageHelper.setTo(toEmail);
+        mimeMessageHelper.setSubject("Bienvenue dans l'équipe Admin de PayPik");
+
+        // Set both text and HTML content
+        mimeMessageHelper.setText(completeMessage, htmlContentWithImage);
+
+        // Add the image as an inline attachment
+        mimeMessageHelper.addInline("image", imageSource, "image/png");
+
+        javaMailSender.send(mimeMessage);
+
+        System.out.println("Mail sent to " + toEmail);
+    }
 
     ///////////////////////////////////////// sendPasswordCommercialEmail
 

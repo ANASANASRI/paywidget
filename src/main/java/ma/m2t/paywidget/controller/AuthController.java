@@ -1,9 +1,17 @@
 package ma.m2t.paywidget.controller;
 
 
+import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import jakarta.validation.Valid;
+import ma.m2t.paywidget.dto.MarchandDTO;
+import ma.m2t.paywidget.emailing.EmailService;
 import ma.m2t.paywidget.enums.ERole;
 import ma.m2t.paywidget.enums.UserStatus;
+import ma.m2t.paywidget.exceptions.MarchandNotFoundException;
+import ma.m2t.paywidget.model.Marchand;
 import ma.m2t.paywidget.model.Role;
 import ma.m2t.paywidget.model.User;
 import ma.m2t.paywidget.payload.request.LoginRequest;
@@ -16,6 +24,7 @@ import ma.m2t.paywidget.repository.UserRepository;
 import ma.m2t.paywidget.security.jwt.JwtUtils;
 import ma.m2t.paywidget.security.jwt.services.UserDetailsImpl;
 import ma.m2t.paywidget.security.jwt.services.UserService;
+import ma.m2t.paywidget.service.MarchandService;
 import ma.m2t.paywidget.services.ChangePasswordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,7 +54,13 @@ public class AuthController {
     UserRepository userRepository;
 
     @Autowired
+    MarchandService marchandService;
+
+    @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     RoleRepository roleRepository;
@@ -55,6 +70,10 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -94,17 +113,40 @@ public class AuthController {
     public ResponseEntity<?> updatePassword(
             @PathVariable Long userId, @Valid @RequestBody ChangePasswordRequest updatePasswordRequest) {
 
-        User user = userRepository.getReferenceById(userId);
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
 
-        if (!encoder.matches(updatePasswordRequest.getOldPassword(), user.getPassword())) {
+        User user = entityManager.find(User.class, userId);
+        if (user != null && encoder.matches(updatePasswordRequest.getOldPassword(), user.getPassword())) {
+            user.setPassword(encoder.encode(updatePasswordRequest.getNewPassword()));
+            entityManager.persist(user);
+        } else {
             throw new BadCredentialsException("Invalid old password");
         }
 
-        user.setPassword(encoder.encode(updatePasswordRequest.getNewPassword()));
-        userRepository.save(user);
+        transaction.commit();
+        entityManager.close();
 
         return ResponseEntity.ok(new MessageResponse("Password updated successfully"));
     }
+
+
+//    @PutMapping("/users/{userId}/password")
+//    public ResponseEntity<?> updatePassword(
+//            @PathVariable Long userId, @Valid @RequestBody ChangePasswordRequest updatePasswordRequest) {
+//
+//        User user = userRepository.getReferenceById(userId);
+//
+//        if (!encoder.matches(updatePasswordRequest.getOldPassword(), user.getPassword())) {
+//            throw new BadCredentialsException("Invalid old password");
+//        }
+//
+//        user.setPassword(encoder.encode(updatePasswordRequest.getNewPassword()));
+//        userRepository.save(user);
+//
+//        return ResponseEntity.ok(new MessageResponse("Password updated successfully"));
+//    }
 
     @GetMapping("/users")
     @PreAuthorize("permitAll()")
@@ -142,6 +184,18 @@ public class AuthController {
     public ResponseEntity<List<User>> findUser() {
         List<User> users = userRepository.findUser();
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/userbymarchandid/{marchandId}")
+    @PreAuthorize("permitAll()")
+    public Long findUserByMarchandId(@PathVariable Long marchandId) throws MarchandNotFoundException {
+        MarchandDTO marchandDTO = marchandService.findMarchandById(marchandId);
+
+        String marchandName =marchandDTO.getMarchandName();
+
+        Optional<User> user = userRepository.findByUsername(marchandName);
+
+        return user.get().getId();
     }
 
 
@@ -208,73 +262,160 @@ public class AuthController {
     }
 
 
+//    @PostMapping("/signup")
+//    @PreAuthorize("permitAll()")
+//    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+//        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body(new MessageResponse("Error: Username is already taken!"));
+//        }
+//
+//
+//        // Créer un nouvel utilisateur avec le statut par défaut "Active"
+//        User user = new User(
+//                signUpRequest.getUsername(),
+//                signUpRequest.getFirstName(),
+//                signUpRequest.getLastName(),
+//                UserStatus.Active,
+//                signUpRequest.getEmail(),
+//                encoder.encode(signUpRequest.getPassword()), // Utilisez le mot de passe fourni
+//                signUpRequest.getProfilLogoUrl(),
+//                new HashSet<>() // Créez un ensemble vide pour les rôles
+//        );
+//
+//        // Define the roles of the user
+//        Set<String> strRoles = signUpRequest.getRole();
+//        Set<Role> roles = new HashSet<>();
+//
+//        if (strRoles != null) {
+//            strRoles.forEach(role -> {
+//                switch (role.toUpperCase()) {
+//                    case "ROLE_ADMIN":
+//                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+//                                .orElseThrow(() -> new RuntimeException("Error: Role ROLE_ADMIN is not found."));
+//                        roles.add(adminRole);
+//                        break;
+//                    case "ROLE_MARCHAND":
+//                        Role marchandRole = roleRepository.findByName(ERole.ROLE_MARCHAND)
+//                                .orElseThrow(() -> new RuntimeException("Error: Role ROLE_MARCHAND is not found."));
+//                        roles.add(marchandRole);
+//                        break;
+//                    case "ROLE_COMMERCIAL":
+//                        Role commercialRole = roleRepository.findByName(ERole.ROLE_COMMERCIAL)
+//                                .orElseThrow(() -> new RuntimeException("Error: Role ROLE_COMMERCIAL is not found."));
+//                        roles.add(commercialRole);
+//                        break;
+//                    default:
+//                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+//                                .orElseThrow(() -> new RuntimeException("Error: Role ROLE_USER is not found."));
+//                        roles.add(userRole);
+//                }
+//            });
+//        }
+//
+//
+//        // Définir les rôles de l'utilisateur
+////        setRoles(signUpRequest.getRoles(), user.getRoles());
+//
+//        user.setRoles(roles);
+//        userRepository.save(user);
+//        // Envoyer l'email basé sur le rôle de l'utilisateur
+//        sendRoleBasedEmail(user, signUpRequest.getPassword());
+//
+//        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+//    }
+
     @PostMapping("/signup")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        System.out.println("Received SignupRequest: " + signUpRequest);
+
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
 
-        // Créer un nouvel utilisateur avec le statut par défaut "Inactive"
-        signUpRequest.setStatus(UserStatus.Active);
-
-        // Générer un mot de passe aléatoire
-        //   String generatedPassword = generateRandomPassword();
-
-        // Créer un nouvel utilisateur à partir des informations fournies dans la requête
         User user = new User(
                 signUpRequest.getUsername(),
                 signUpRequest.getFirstName(),
                 signUpRequest.getLastName(),
+                UserStatus.Active,
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()), // Utilisez le mot de passe aléatoire généré
-                signUpRequest.getStatus().toString(),
-                signUpRequest.getProfilLogoUrl()
+                encoder.encode(signUpRequest.getPassword()),
+                signUpRequest.getProfilLogoUrl(),
+                new HashSet<>()
         );
 
         // Définir les rôles de l'utilisateur
-        Set<String> strRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
+        setRoles(signUpRequest.getRoles(), user.getRoles());
 
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role ROLE_USER is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role ROLE_ADMIN is not found."));
-                        roles.add(adminRole);
-                        break;
-                    case "marchand":
-                        Role marchandRole = roleRepository.findByName(ERole.ROLE_MARCHAND)
-                                .orElseThrow(() -> new RuntimeException("Error: Role ROLE_MARCHAND is not found."));
-                        roles.add(marchandRole);
-                        break;
-                    case "commercial":
-                        Role commercialRole = roleRepository.findByName(ERole.ROLE_COMMERCIAL)
-                                .orElseThrow(() -> new RuntimeException("Error: Role ROLE_COMMERCIAL is not found."));
-                        roles.add(commercialRole);
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role ROLE_USER is not found."));
-                        roles.add(userRole);
-                }
-            });
-        }
-
-        user.setRoles(roles);
         userRepository.save(user);
+
+
+        // Extract and print role names
+        Set<String> roleNames = user.getRoles().stream()
+                .map(Role::getName)
+                .map(Enum::name)
+                .collect(Collectors.toSet());
+        System.out.println("Assigned Role Names: " + roleNames);
+
+
+        System.out.println("Final User: " + user);
+
+        sendRoleBasedEmail(user, signUpRequest.getPassword());
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
-    // Méthode pour générer un mot de passe aléatoire
+    private void setRoles(Set<String> strRoles, Set<Role> roles) {
+        if (strRoles == null || strRoles.isEmpty()) {
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
+        } else {
+            strRoles.forEach(role -> {
+                Role foundRole = roleRepository.findByName(ERole.valueOf(role))
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                roles.add(foundRole);
+            });
+        }
+    }
+
+
+
+
+
+
+
+    //Cette  méthode est utiliser pour envoyer des emails basés sur le rôle
+    private void sendRoleBasedEmail(User user, String password) {
+        boolean isMarchand = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals(ERole.ROLE_MARCHAND));
+
+        boolean isCommercial = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals(ERole.ROLE_COMMERCIAL));
+
+        boolean isAdmin = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals(ERole.ROLE_ADMIN));
+
+        try {
+            if (isMarchand) {
+                emailService.sendPasswordMarchandEmail(user.getEmail(), user.getUsername(), password);
+            } else if (isCommercial) {
+                emailService.sendPasswordCommercialEmail(user.getEmail(), user.getUsername(), password);
+            } else if (isAdmin) {
+                emailService.sendPasswordAdminEmail(user.getEmail(), user.getUsername(), password);
+            }
+        } catch (MessagingException e) {
+            // Gérer les exceptions d'envoi d'email
+            throw new RuntimeException("User registered but failed to send email: " + e.getMessage());
+        }
+    }
+
+
+        // Méthode pour générer un mot de passe aléatoire
     private String generateRandomPassword() {
         SecureRandom random = new SecureRandom();
         byte[] passwordBytes = new byte[8]; // Longueur du mot de passe
