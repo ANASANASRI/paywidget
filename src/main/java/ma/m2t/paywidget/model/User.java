@@ -12,12 +12,10 @@ import ma.m2t.paywidget.enums.UserStatus;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity
 @Table(name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "username"),
-
+                @UniqueConstraint(columnNames = "username")
         })
 @Data @Getter @Setter
 public class User {
@@ -48,42 +46,37 @@ public class User {
     @NotBlank
     @Size(max = 225)
     private String password;
+
     @NotBlank
     @Size(max = 100)
-    private String profilLogoUrl; // if marchand ==> profilLogoUrl == marchandLogoUrl
+    private String profilLogoUrl;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(  name = "user_roles",
+    @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User() {
-    }
+    public User() {}
 
-    public User(String username, String firstName, String lastName, String email, String password,String status,String profilLogoUrl ) {
+    public User(String username, String firstName, String lastName, String email, String password, String status, String profilLogoUrl) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.status=UserStatus.valueOf(status);
-        this.profilLogoUrl=profilLogoUrl;
+        this.status = UserStatus.valueOf(status);
+        this.profilLogoUrl = profilLogoUrl;
     }
 
-
-    public User(String username, String firstName, String lastName, String password) {
+    public User(String username, String firstName, String lastName, UserStatus status, String email, String password, String profilLogoUrl, Set<Role> roles) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.status = status;
+        this.email = email;
         this.password = password;
-
+        this.profilLogoUrl = profilLogoUrl;
+        this.roles = roles;
     }
-
-    /*public User(String username, String email, String password) {
-      this.username = username;
-      this.email = email;
-      this.password = password;
-    }*/
-
 }

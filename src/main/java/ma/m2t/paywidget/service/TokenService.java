@@ -10,7 +10,21 @@ public interface TokenService {
 
 ///****************************************************************************************************
 //Get
-    String getToken(String requestDate,String organismId,String orderId,String orderAmount,String customerMail ,String customerPhone);
+    String generateToken(
+                        String serviceId,
+                        String organismId,
+                        String expirationDate,
+                        String requestDate,
+                        String checkSum,
+                        String tokenStatus,
+                        String orderId,
+                        String orderAmount,
+                        String customerName,
+                        String customerMail,
+                        String currency,
+                        String marchandId
+                        ) throws Exception ;
+
 
     String CallbackTokenReceived();
 
@@ -21,4 +35,5 @@ public interface TokenService {
 
 ///****************************************************************************************************
 //Delete
+
 }
