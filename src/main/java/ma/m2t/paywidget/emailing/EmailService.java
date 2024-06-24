@@ -30,48 +30,91 @@ public class EmailService {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
-// Load the image file
-        String imagePath = "static/images/footer.png";
-        Resource imageSource = new ClassPathResource(imagePath);
+        // Email content
+        String header = "Cher " + toEmail + ",";
 
-        String header = "Cher "+toEmail+",\n\n";
-        String footer = "\n\nCordialement,\nPayPik\n";
+        String verificationMessage = "Nous vous remercions d'avoir soumis votre demande pour devenir un marchand avec nous. " +
+                "Nous tenons à vous informer que nous avons bien reçu votre demande et que notre équipe est actuellement en train de la vérifier.<br><br>" +
+                "Dans les prochaines 24 heures, vous recevrez un autre email de notre part vous informant de la décision concernant votre demande. " +
+                "Nous vous prions de consulter régulièrement votre boîte de réception, y compris votre dossier de spam, au cas où notre email serait dirigé là-bas par erreur.<br>";
 
-        String verificationMessage = "Nous vous remercions d'avoir soumis votre demande pour devenir un marchand avec nous. Nous tenons à vous informer que nous avons bien reçu votre demande et que notre équipe est actuellement en train de la vérifier.\n\nNous vous prions de bien vouloir patienter pendant que nous examinons attentivement votre demande. Nous vous assurons que nous mettons tout en œuvre pour traiter votre demande dans les plus brefs délais.\n\nDans les prochaines 24 heures, vous recevrez un autre email de notre part vous informant de la décision concernant votre demande. Nous vous prions de consulter régulièrement votre boîte de réception, y compris votre dossier de spam, au cas où notre email serait dirigé là-bas par erreur.\n\nNous vous remercions de votre intérêt à rejoindre notre réseau de marchands. Si vous avez des questions ou des préoccupations en attendant, n'hésitez pas à nous contacter à paypik.m2t@gmail.com .";
-
-        String completeMessage = header + verificationMessage + footer;
-
-// HTML content with image
-        String htmlContentWithImage = completeMessage.replace("\n", "<br>") + "<br><img src='cid:image' style='width:100%; max-width:700px;'>";
-
-//        // Construct the HTML message
-//        String htmlContent = "<html>" +
-//                "<body>" +
-//                "<p>" + header + ",</p>" +
-//                "<p>"+verificationMessage+"</p>" +
-//                "<p>"+footer+"</p>" +
-//                "<img src='cid:image' style='width:100%; max-width:700px;'>" +
-//                "</body>" +
-//                "</html>";
+        // Construct the HTML message
+        String htmlContent = "<!DOCTYPE html>"
+                + "<html lang=\"fr\">"
+                + "<head>"
+                + "<meta charset=\"UTF-8\">"
+                + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+                + "<title>Confirmation de réception de votre demande</title>"
+                + "<style>"
+                + "body {"
+                + "    background-color: #f4f4f4;"
+                + "    font-family: 'Arial', sans-serif;"
+                + "}"
+                + ".email-container {"
+                + "    max-width: 600px;"
+                + "    margin: 0 auto;"
+                + "    padding: 20px;"
+                + "    background-color: #fff;"
+                + "    border-radius: 10px;"
+                + "    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"
+                + "}"
+                + ".email-header {"
+                + "    text-align: center;"
+                + "    padding-bottom: 20px 20px 5px 20px;"
+                + "}"
+                + ".image-footer {"
+                + "    width: 150px;"
+                + "    margin: 0 auto;"
+                + "    padding: 20px 20px 5px 20px;"
+                + "    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"
+                + "}"
+                + ".email-header img {"
+                + "    max-width: 150px;"
+                + "    border-radius: 5%;"
+                + "}"
+                + ".email-content {"
+                + "    text-align: center;"
+                + "    padding: 0px 20px 0px 20px;"
+                + "}"
+                + ".email-content h1 {"
+                + "    color: #7ab024;"
+                + "}"
+                + ".email-content p {"
+                + "    color: #555;"
+                + "    font-size: 16px;"
+                + "    line-height: 1.5;"
+                + "}"
+                + ".email-footer {"
+                + "    text-align: center;"
+                + "    padding-top: 0px 20px 20px 20px;"
+                + "    font-size: 12px;"
+                + "    color: #aaa;"
+                + "}"
+                + "</style>"
+                + "</head>"
+                + "<body>"
+                + "<div class=\"email-container\">"
+                + "    <div class=\"email-header\">"
+                + "        <img src=\"https://i.ibb.co/gFZGbV3/Logopng.png\" alt=\"PayPik\">"
+                + "    </div>"
+                + "    <div class=\"email-content\">"
+                + "        <p>" + header + "</p>"
+                + "        <p>" + verificationMessage + "</p>"
+                + "        <p>Cordialement,<br><img class=\"image-footer\"  src=\"https://i.ibb.co/4ZJ5rVW/Pay-Pikpng.png\" alt=\"PayPik\"></p>"
+                + "    </div>"
+                + "    <div class=\"email-footer\">"
+                + "        <p>Si vous avez des questions, veuillez nous contacter à <a href='mailto:paypik.m2t@gmail.com'>paypik.m2t@gmail.com</a>.</p>"
+                + "    </div>"
+                + "</div>"
+                + "</body>"
+                + "</html>";
 
         mimeMessageHelper.setFrom("paypik.m2t@gmail.com");
         mimeMessageHelper.setTo(toEmail);
-        mimeMessageHelper.setText(completeMessage);
-
-// Set both text and HTML content
-        mimeMessageHelper.setText(completeMessage, htmlContentWithImage);
-// Add the image as an inline attachment
-        mimeMessageHelper.addInline("image", imageSource, "image/png");
-
         mimeMessageHelper.setSubject("Confirmation de réception de votre demande");
 
-//        try {
-//            Resource resource = new ClassPathResource("static/images/emailaccepted.jpg");
-//            mimeMessageHelper.addAttachment(Objects.requireNonNull(resource.getFilename()), resource);
-//        } catch (Exception e) {
-//            // Handle the exception
-//            e.printStackTrace();
-//        }
+        // Set the HTML content
+        mimeMessageHelper.setText(htmlContent, true);
 
         javaMailSender.send(mimeMessage);
 
