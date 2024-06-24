@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Paypal extends PaymentMethod {
-    private Long paypalId;
     private String emailAddress;
     private String password;
     private Double balance;

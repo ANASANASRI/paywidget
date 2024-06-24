@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@PrimaryKeyJoinColumn(name = "paymentMethodId")
 public class Token extends PaymentMethod {
-
-    private Long tokenId;
 
     private String tokenResponse;
     private String tokenName;

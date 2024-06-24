@@ -5,7 +5,8 @@ import ma.m2t.paywidget.model.Token;
 public interface TokenService {
 ///****************************************************************************************************
 //Post
-    Token saveNewToken(Token token);
+    Token saveToken(Token token);
+
     void callback();
 
 ///****************************************************************************************************

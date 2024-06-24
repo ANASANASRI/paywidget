@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Card extends PaymentMethod {
-    private Long cardId;
     private String cardNumber;
     private String expirationDate;
     private String cvv;

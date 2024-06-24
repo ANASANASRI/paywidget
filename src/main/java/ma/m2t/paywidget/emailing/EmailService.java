@@ -44,6 +44,15 @@ public class EmailService {
 // HTML content with image
         String htmlContentWithImage = completeMessage.replace("\n", "<br>") + "<br><img src='cid:image' style='width:100%; max-width:700px;'>";
 
+//        // Construct the HTML message
+//        String htmlContent = "<html>" +
+//                "<body>" +
+//                "<p>" + header + ",</p>" +
+//                "<p>"+verificationMessage+"</p>" +
+//                "<p>"+footer+"</p>" +
+//                "<img src='cid:image' style='width:100%; max-width:700px;'>" +
+//                "</body>" +
+//                "</html>";
 
         mimeMessageHelper.setFrom("paypik.m2t@gmail.com");
         mimeMessageHelper.setTo(toEmail);

@@ -12,6 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Amanty extends PaymentMethod {
 
-    private Long amantyId;
     private String amantyName;
 }

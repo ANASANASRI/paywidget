@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.m2t.paywidget.dto.TransactionDTO;
 import ma.m2t.paywidget.model.Token;
+import ma.m2t.paywidget.repository.TokenRepository;
 import org.json.JSONObject;
 import ma.m2t.paywidget.model.Transaction;
 import ma.m2t.paywidget.service.TokenService;
@@ -42,6 +43,9 @@ public class TokenServiceImpl implements TokenService {
     private static final String EXTCHANGERATE_API_URL = "https://v6.exchangerate-api.com/v6/" + EXTCHANGERATE_API_KEY + "/latest/";
 
     @Autowired
+    private TokenRepository tokenRepository;
+
+    @Autowired
     private TransactionService transactionService;
 
 ///****************************************************************************************************
@@ -65,14 +69,15 @@ public class TokenServiceImpl implements TokenService {
             String marchandId
     ) throws Exception {
 
-        String amountInMADString = this.convertToMAD(Double.parseDouble(orderAmount), currency.toUpperCase());
+//---//        //String amountInMADString = this.convertToMAD(Double.parseDouble(orderAmount), currency.toUpperCase());
 
         // Create request payload
         Map<String, String> payload = new HashMap<>();
         payload.put("orderId", orderId);
         payload.put("serviceId", serviceId);
         payload.put("organismId", organismId);
-        payload.put("orderAmount", amountInMADString);
+//---//        payload.put("orderAmount", amountInMADString);
+        payload.put("orderAmount", orderAmount);
         payload.put("requestDate", requestDate);
         payload.put("customerName", customerName);
         payload.put("customerMail", customerMail);
@@ -99,8 +104,18 @@ public class TokenServiceImpl implements TokenService {
             if (response.getStatusCode().is2xxSuccessful()) {
                 Map<String, Object> responseBody = response.getBody();
 
-                // Call saveTokenTransaction method
-                TransactionDTO transactionDTO = saveTokenTransaction(orderId, amountInMADString, customerName, customerMail, marchandId);
+
+                //saveToken
+//                Token token = new Token(
+//                        responseBody != null ? (String) responseBody.get("token") : null,
+//                        customerName,
+//                        customerMail
+//                );
+//                saveToken(token);
+
+                // saveTokenTransaction
+//---//                TransactionDTO transactionDTO = saveTokenTransaction(orderId, amountInMADString, customerName, customerMail, marchandId);
+                TransactionDTO transactionDTO = saveTokenTransaction(orderId, orderAmount, customerName, customerMail, marchandId);
 
                 return responseBody != null ? (String) responseBody.get("token") : null;
             } else {
@@ -115,8 +130,8 @@ public class TokenServiceImpl implements TokenService {
 
 
     @Override
-    public Token saveNewToken(Token token) {
-        return null;
+    public Token saveToken(Token token) {
+        return tokenRepository.save(token);
     }
 
     @Override
@@ -142,8 +157,6 @@ public class TokenServiceImpl implements TokenService {
 
 ///****************************************************************************************************
 //Delete/////////////////////
-
-
 
 ///****************************************************************************************************
 //Called/////////////////////
