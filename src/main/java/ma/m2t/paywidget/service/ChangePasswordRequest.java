@@ -1,4 +1,4 @@
-package ma.m2t.paywidget.services;
+package ma.m2t.paywidget.service;
 
 public class ChangePasswordRequest {
 

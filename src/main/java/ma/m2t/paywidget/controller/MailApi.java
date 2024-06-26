@@ -2,7 +2,7 @@ package ma.m2t.paywidget.controller;
 
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
-import ma.m2t.paywidget.emailing.EmailService;
+import ma.m2t.paywidget.service.EmailService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -55,11 +55,17 @@ public class MailApi {
     }
 
 
-    //
+//
 //    @PostMapping("/adminpassword")
 //    public String sentAdminPasswordAcceptedMail(String toEmail,String username , String password) throws MessagingException {
 //        this.emailService.sendPasswordAdminEmail( toEmail, username, password);
 //        return "Success accepted";
+//    }
+//
+//    @PostMapping("/commercial1/password")
+//    public String sendPasswordCommercialMail1(String toEmail, String username, String password) throws MessagingException {
+//        this.emailService.sendPasswordCommercialEmail(toEmail, username, password);
+//        return "Password Email Sent Successfully";
 //    }
 
 }

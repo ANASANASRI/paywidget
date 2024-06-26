@@ -4,7 +4,7 @@ import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import ma.m2t.paywidget.dto.DemandeDTO;
 import ma.m2t.paywidget.dto.MarchandDTO;
-import ma.m2t.paywidget.emailing.EmailService;
+import ma.m2t.paywidget.service.EmailService;
 import ma.m2t.paywidget.enums.Status;
 import ma.m2t.paywidget.exceptions.MarchandNotFoundException;
 import ma.m2t.paywidget.model.Demande;

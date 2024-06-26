@@ -1,7 +1,7 @@
-package ma.m2t.paywidget.emailing;
+package ma.m2t.paywidget.service;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.mail.MessagingException;
+import jakarta.mail.*;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -23,7 +23,7 @@ public class EmailService {
 
     @PostConstruct
     public void init() {
-        // Perform any necessary initialization here.
+
     }
 
     public void sendDemandeVerificationEmail(String toEmail) throws MessagingException {
@@ -339,4 +339,92 @@ public class EmailService {
             e.printStackTrace();
         }
     }
+
+    /////////////////////
+
+//    @PostConstruct
+//    public void init() {
+//        Security.addProvider(new BouncyCastleProvider());
+//        try {
+//            KeyGenerator keyGen = KeyGenerator.getInstance("AES", "BC");
+//            keyGen.init(256);
+//            this.secretKey = keyGen.generateKey();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private SecretKey secretKey;
+//
+//    private String encrypt(String data) throws Exception {
+//        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC");
+//        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+//        byte[] iv = cipher.getIV();
+//        byte[] encrypted = cipher.doFinal(data.getBytes());
+//        byte[] combined = new byte[iv.length + encrypted.length];
+//        System.arraycopy(iv, 0, combined, 0, iv.length);
+//        System.arraycopy(encrypted, 0, combined, iv.length, encrypted.length);
+//        return Base64.getEncoder().encodeToString(combined);
+//    }
+//
+//    private String decrypt(String encryptedData) throws Exception {
+//        byte[] combined = Base64.getDecoder().decode(encryptedData);
+//        byte[] iv = new byte[12];
+//        byte[] encrypted = new byte[combined.length - 12];
+//        System.arraycopy(combined, 0, iv, 0, 12);
+//        System.arraycopy(combined, 12, encrypted, 0, encrypted.length);
+//
+//        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC");
+//        cipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(128, iv));
+//        byte[] decrypted = cipher.doFinal(encrypted);
+//        return new String(decrypted);
+//    }
+//
+//    public void sendPasswordCommercialEmail1(String toEmail, String username, String password) throws MessagingException {
+//        String encryptedPassword;
+//        try {
+//            encryptedPassword = encrypt(password);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Erreur de chiffrement du mot de passe", e);
+//        }
+//
+//        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+//        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+//
+//        // Load the image file
+//        String imagePath = "static/images/footer.png";
+//        Resource imageSource = new ClassPathResource(imagePath);
+//
+//        String header = "Cher " + username + ",\n\n";
+//        String footer = "\n\nCordialement,\nL'équipe PayPik\n";
+//
+//        String internalMessage = "Bienvenue dans l'équipe commerciale de PayPik !\n\n"
+//                + "Nous sommes ravis de vous avoir parmi nous et nous sommes impatients de collaborer avec vous pour atteindre de nouveaux sommets.\n\n"
+//                + "Voici vos identifiants de connexion :\n"
+//                + "Nom d'utilisateur : <b>" + username + "</b>\n"
+//                + "Mot de passe temporaire : <b>" + encryptedPassword + "</b>\n\n"
+//                + "Pour des raisons de sécurité, veuillez mettre à jour votre mot de passe dans la section 'Profil' dès que possible.\n\n"
+//                + "Si vous avez des questions ou avez besoin d'assistance, n'hésitez pas à nous contacter.\n\n"
+//                + "Encore une fois, bienvenue dans l'équipe et nous sommes heureux de vous compter parmi nous !";
+//
+//        String completeMessage = header + internalMessage + footer;
+//
+//        // HTML content with image
+//        String htmlContentWithImage = completeMessage.replace("\n", "<br>") + "<br><img src='cid:image' style='width:100%; max-width:700px;'>";
+//
+//        mimeMessageHelper.setFrom("paypik.m2t@gmail.com");
+//        mimeMessageHelper.setTo(toEmail);
+//        mimeMessageHelper.setSubject("Bienvenue dans l'équipe commerciale de PayPik");
+//
+//        // Set both text and HTML content
+//        mimeMessageHelper.setText(completeMessage, htmlContentWithImage);
+//
+//        // Add the image as an inline attachment
+//        mimeMessageHelper.addInline("image", imageSource, "image/png");
+//
+//        javaMailSender.send(mimeMessage);
+//
+//        System.out.println("Mail sent to " + toEmail);
+//    }
+
 }
