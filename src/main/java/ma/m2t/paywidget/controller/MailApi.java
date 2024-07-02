@@ -2,7 +2,7 @@ package ma.m2t.paywidget.controller;
 
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
-import ma.m2t.paywidget.service.EmailService;
+import ma.m2t.paywidget.service.serviceImpl.EmailService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -52,6 +52,12 @@ public class MailApi {
             @RequestParam("nom") String nom,
             @RequestParam("message") String message) {
         emailService.sendEmail(subject, nom, message);
+    }
+
+    @PostMapping("/send-token")
+    public String sendTokenMail(@RequestParam String name, @RequestParam String toEmail, @RequestParam String token) throws MessagingException {
+        this.emailService.sendTokenMail(name, toEmail, token);
+        return "Email Sent Successfully";
     }
 
 

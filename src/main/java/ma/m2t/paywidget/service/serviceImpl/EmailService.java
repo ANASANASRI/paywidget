@@ -1,4 +1,4 @@
-package ma.m2t.paywidget.service;
+package ma.m2t.paywidget.service.serviceImpl;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.*;
@@ -338,6 +338,99 @@ public class EmailService {
         } catch (MailException e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendTokenMail(String name, String toEmail, String token) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+        // Email content
+        String header = "Cher " + name + ",";
+
+        String verificationMessage = "Voici votre jeton : <strong>" + token + "</strong><br><br>" +
+                "Rendez-vous à l’agence Chaabi Cash ou Tasshilat pour effectuer votre paiement en espèces.<br>";
+
+        // Construct the HTML message
+        String htmlContent = "<!DOCTYPE html>"
+                + "<html lang=\"fr\">"
+                + "<head>"
+                + "<meta charset=\"UTF-8\">"
+                + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+                + "<title>Votre jeton 'Token' de paiement</title>"
+                + "<style>"
+                + "body {"
+                + "    background-color: #f4f4f4;"
+                + "    font-family: 'Arial', sans-serif;"
+                + "}"
+                + ".email-container {"
+                + "    max-width: 600px;"
+                + "    margin: 0 auto;"
+                + "    padding: 20px;"
+                + "    background-color: #fff;"
+                + "    border-radius: 10px;"
+                + "    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"
+                + "}"
+                + ".email-header {"
+                + "    text-align: center;"
+                + "    padding-bottom: 20px 20px 5px 20px;"
+                + "}"
+                + ".image-footer {"
+                + "    width: 150px;"
+                + "    margin: 0 auto;"
+                + "    padding: 20px 20px 5px 20px;"
+                + "    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"
+                + "}"
+                + ".email-header img {"
+                + "    max-width: 150px;"
+                + "    border-radius: 5%;"
+                + "}"
+                + ".email-content {"
+                + "    text-align: center;"
+                + "    padding: 0px 20px 0px 20px;"
+                + "}"
+                + ".email-content h1 {"
+                + "    color: #7ab024;"
+                + "}"
+                + ".email-content p {"
+                + "    color: #555;"
+                + "    font-size: 16px;"
+                + "    line-height: 1.5;"
+                + "}"
+                + ".email-footer {"
+                + "    text-align: center;"
+                + "    padding-top: 0px 20px 20px 20px;"
+                + "    font-size: 12px;"
+                + "    color: #aaa;"
+                + "}"
+                + "</style>"
+                + "</head>"
+                + "<body>"
+                + "<div class=\"email-container\">"
+                + "    <div class=\"email-header\">"
+                + "        <img src=\"https://i.ibb.co/gFZGbV3/Logopng.png\" alt=\"PayPik\">"
+                + "    </div>"
+                + "    <div class=\"email-content\">"
+                + "        <p>" + header + "</p>"
+                + "        <p>" + verificationMessage + "</p>"
+                + "        <img class=\"image-footer\"  src=\"https://i.ibb.co/4ZJ5rVW/Pay-Pikpng.png\" alt=\"PayPik\">"
+                + "    </div>"
+                + "    <div class=\"email-footer\">"
+                + "        <p>Si vous avez des questions, veuillez nous contacter à <a href='mailto:paypik.m2t@gmail.com'>paypik.m2t@gmail.com</a>.</p>"
+                + "    </div>"
+                + "</div>"
+                + "</body>"
+                + "</html>";
+
+        mimeMessageHelper.setFrom("paypik.m2t@gmail.com");
+        mimeMessageHelper.setTo(toEmail);
+        mimeMessageHelper.setSubject("Votre jeton 'Token' de paiement");
+
+        // Set the HTML content
+        mimeMessageHelper.setText(htmlContent, true);
+
+        javaMailSender.send(mimeMessage);
+
+        System.out.println("Mail sent to " + toEmail);
     }
 
     /////////////////////

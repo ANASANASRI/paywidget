@@ -1,9 +1,7 @@
 package ma.m2t.paywidget.controller;
 
 import lombok.AllArgsConstructor;
-import ma.m2t.paywidget.dto.TransactionDTO;
 import ma.m2t.paywidget.service.TokenService;
-import ma.m2t.paywidget.service.TransactionService;
 import ma.m2t.paywidget.service.serviceImpl.TokenServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,22 +13,22 @@ import java.util.Date;
 @RestController
 @CrossOrigin("*")
 @AllArgsConstructor
-@RequestMapping("token")
-public class TokenApi {
+@RequestMapping("/paypik/callback")
+public class CallBackApi {
 
     @Autowired
     private TokenService tokenService;
 
-    // Generate the token
-    @GetMapping("/generate-token")
-    public String generateToken(
-                @RequestParam String orderId,
-                @RequestParam String orderAmount,
-                @RequestParam String customerMail,
-                @RequestParam String customerName,
-                @RequestParam String currency,
-                @RequestParam String marchandId
-            ) throws Exception {
+    // Token X Payed
+    @GetMapping("/payed-token")
+    public String isPayedToken(
+            @RequestParam String orderId,
+            @RequestParam String orderAmount,
+            @RequestParam String customerMail,
+            @RequestParam String customerName,
+            @RequestParam String currency,
+            @RequestParam String marchandId
+    ) throws Exception {
 
         // Get current date and calculate expiration date
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -44,11 +42,9 @@ public class TokenApi {
         String expirationDate = dateFormat.format(calendar.getTime());
         //System.out.println(expirationDate);
 
-
         //
         String organismId = "3001" ;
         String serviceId = "3001" ;
-        // Oper Secret Key
         String secretKey = "BYu5@SP++hG278FC6KGvbn";
 
         // Calculate checksum
@@ -58,18 +54,18 @@ public class TokenApi {
 
         // Generate token
         return tokenService.generateToken(
-                 serviceId,
-                 organismId,
-                 expirationDate,
-                 requestDate,
-                 checkSum,
-                 "ACTIVATE" ,
-                 orderId,
-                 orderAmount,
-                 customerName,
-                 customerMail,
-                 currency,
-                 marchandId
+                serviceId,
+                organismId,
+                expirationDate,
+                requestDate,
+                checkSum,
+                "ACTIVATE" ,
+                orderId,
+                orderAmount,
+                customerName,
+                customerMail,
+                currency,
+                marchandId
         );
     }
 

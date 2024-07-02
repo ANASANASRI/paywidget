@@ -1,14 +1,6 @@
 package ma.m2t.paywidget.controller;
 
-import com.paypal.api.payments.Links;
-import com.paypal.api.payments.Payment;
-import com.paypal.base.rest.PayPalRESTException;
-import ma.m2t.paywidget.service.PaypalService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/paypal")
@@ -66,7 +58,7 @@ public class PaypalController {
 //import com.paypal.api.payments.Links;
 //import com.paypal.api.payments.Payment;
 //import com.paypal.base.rest.PayPalRESTException;
-//import ma.m2t.paywidget.service.PaypalService;
+//import ma.m2t.paywidget.service.serviceImpl.PaypalService;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.web.bind.annotation.*;
 //import org.springframework.web.servlet.view.RedirectView;
