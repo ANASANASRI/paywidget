@@ -61,7 +61,6 @@ public class MailApi {
     }
 
 
-//
 //    @PostMapping("/adminpassword")
 //    public String sentAdminPasswordAcceptedMail(String toEmail,String username , String password) throws MessagingException {
 //        this.emailService.sendPasswordAdminEmail( toEmail, username, password);

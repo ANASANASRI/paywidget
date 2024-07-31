@@ -211,6 +211,7 @@ public class EmailService {
                 + "Félicitations ! Vous êtes désormais officiellement membre de notre réseau de marchands. Nous sommes impatients de travailler avec vous et de vous soutenir dans la croissance de votre activité.\n\n"
                 + "Votre nom d'utilisateur est : <b>" + username + "</b>\n"
                 + "Votre mot de passe temporaire est : <b>" + password + "</b>\n\n"
+//                + "Votre secret key est : <b>" + secret key + "</b>\n\n"
                 + "Pour des raisons de sécurité, nous vous recommandons fortement de mettre à jour votre mot de passe dans la section 'Profil' dès que possible.\n\n"
                 + "Dans les prochains jours, vous recevrez des informations supplémentaires sur les prochaines étapes à suivre pour commencer à vendre sur notre plateforme. "
                 + "Si vous avez des questions ou avez besoin d'assistance, n'hésitez pas à nous contacter à paypik.m2t@gmail.com.\n\n"

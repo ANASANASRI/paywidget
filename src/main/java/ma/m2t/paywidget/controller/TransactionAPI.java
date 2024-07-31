@@ -25,6 +25,7 @@ private TransactionService transactionService;
 //GET
     @GetMapping("/all")
     public List<TransactionDTO> getAllTransactions() {
+
         return transactionService.getAllTransactions();
     }
 

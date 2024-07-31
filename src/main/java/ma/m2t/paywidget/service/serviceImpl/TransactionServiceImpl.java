@@ -72,12 +72,16 @@ public class TransactionServiceImpl implements TransactionService{
 //Get/////////////////////
     @Override
     public List<TransactionDTO> getAllTransactions() {
+
+        // Get List Transactions CMI
+        // Get List transaction Token
         List<Transaction> transactions = transactionRepository.findAll();
         List<TransactionDTO> transactionDTO=new ArrayList<>();
         for (Transaction t:transactions){
             transactionDTO.add(dtoMapper.fromTransaction(t));
         }
         return transactionDTO;
+
     }
     @Override
     public List<TransactionDTO> getAllTransactionsByMarchand(Long marchandId) {

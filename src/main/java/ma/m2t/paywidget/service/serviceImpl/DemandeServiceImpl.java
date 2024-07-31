@@ -28,7 +28,6 @@ public class DemandeServiceImpl implements DemandeService {
 //    private SimpMessagingTemplate messagingTemplate;
 
 
-
     @Override
     public DemandeDTO saveNewDemande(DemandeDTO demandeDTO) {
         demandeDTO.setDemandeIsAccepted(false);

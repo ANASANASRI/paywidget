@@ -1,9 +1,7 @@
 package ma.m2t.paywidget.controller;
 
 import lombok.AllArgsConstructor;
-import ma.m2t.paywidget.dto.TransactionDTO;
 import ma.m2t.paywidget.service.TokenService;
-import ma.m2t.paywidget.service.TransactionService;
 import ma.m2t.paywidget.service.serviceImpl.TokenServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

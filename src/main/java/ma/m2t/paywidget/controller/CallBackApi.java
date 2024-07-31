@@ -19,54 +19,20 @@ public class CallBackApi {
     @Autowired
     private TokenService tokenService;
 
-    // Token X Payed
-    @GetMapping("/payed-token")
-    public String isPayedToken(
-            @RequestParam String orderId,
-            @RequestParam String orderAmount,
-            @RequestParam String customerMail,
-            @RequestParam String customerName,
-            @RequestParam String currency,
-            @RequestParam String marchandId
-    ) throws Exception {
+    // Token X Payed  (Update the payment status to complete )
+    @GetMapping("/payed-token-complete")
+    public String isPayedToken(@RequestParam String token,
+                               @RequestParam String orderAmount,
+                               @RequestParam String customerMail,
+                               @RequestParam String customerName,
+                               @RequestParam String currency,
+                               @RequestParam String marchandId){
+        return "completed";
+    }
 
-        // Get current date and calculate expiration date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        Date now = new Date();
-        String requestDate = dateFormat.format(now);
-        //System.out.println(requestDate);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.add(Calendar.DAY_OF_MONTH, 15);
-        String expirationDate = dateFormat.format(calendar.getTime());
-        //System.out.println(expirationDate);
-
-        //
-        String organismId = "3001" ;
-        String serviceId = "3001" ;
-        String secretKey = "BYu5@SP++hG278FC6KGvbn";
-
-        // Calculate checksum
-        String checkSumData = requestDate + organismId + serviceId + orderId + secretKey;
-        String checkSum = TokenServiceImpl.calculateMD5(checkSumData);
-        //System.out.println(checkSum);
-
-        // Generate token
-        return tokenService.generateToken(
-                serviceId,
-                organismId,
-                expirationDate,
-                requestDate,
-                checkSum,
-                "ACTIVATE" ,
-                orderId,
-                orderAmount,
-                customerName,
-                customerMail,
-                currency,
-                marchandId
-        );
+    @GetMapping("/payed-token-cancelled")
+    public String isNotPayedToken(){
+        return "cancelled";
     }
 
 }

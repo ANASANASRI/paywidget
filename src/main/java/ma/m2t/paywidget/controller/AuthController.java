@@ -206,7 +206,7 @@ public class AuthController {
         User currentUser = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + currentUsername));
 
-        // Update user information meskourth
+        // Update user information
         currentUser.setFirstName(signupRequest.getFirstName());
         currentUser.setLastName(signupRequest.getLastName());
         currentUser.setUsername(signupRequest.getUsername());
