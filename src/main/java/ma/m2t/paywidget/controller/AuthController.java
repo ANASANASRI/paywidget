@@ -429,6 +429,34 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+
+    @GetMapping("/findMarchandIdByUserId/{userId}")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<Long> findMarchandIdByUserId(@PathVariable Long userId) {
+        // Retrieve the user by userId
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            String userName = user.getUsername(); // Assuming the username is the same as the marchand name
+
+            // Get the marchandId
+            Long marchandId = (long) marchandService.findMarchandIdbyMarchandName(userName);
+
+            // Check if marchandId is not null or handle case if not found
+            if (marchandId != null) {
+                return ResponseEntity.ok(marchandId);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+
+
+
     @GetMapping("/findbyid/{id}")
     public User findById(@PathVariable Long id) {
         return userService.findById(id);
