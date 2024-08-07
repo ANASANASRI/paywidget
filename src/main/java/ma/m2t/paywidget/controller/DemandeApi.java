@@ -11,6 +11,7 @@ import ma.m2t.paywidget.model.Demande;
 import ma.m2t.paywidget.repository.DemandeRepository;
 import ma.m2t.paywidget.service.DemandeService;
 import ma.m2t.paywidget.service.MarchandService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,11 @@ import java.util.Optional;
 @AllArgsConstructor
 @RequestMapping("demandes")
 public class DemandeApi {
+
+    // Dependency Injection ,Choose the demandeServiceImpl
+    // @Qualifier("demandeServiceImpl")2
     private final DemandeService demandeService;
+
     private DemandeRepository demandeRepository;
     private MarchandService marchandService;
     private EmailService emailService;
